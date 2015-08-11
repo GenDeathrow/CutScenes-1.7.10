@@ -1,0 +1,43 @@
+{
+  "closeOnTicks": "220",
+  "screenSegments": [
+    {
+		// 1st Segment
+      "tickLength": "120", 
+      "actorArray": [
+        {
+		  "type": "image",
+	      "resource": "logo.png",
+		  "alignment" : "CENTER_CENTER",
+		  "imageWidth": "256",
+		  "imageHeight": "45",
+          "tickLength": "120"
+        },
+        {
+		  "startTick": "0",
+          "tickLength": "50",
+          "displayText": "Screen and Text Test and we will see if this works.. cause if it doesn't I dont know what to do next, but if it didn't work I would really hate it.. alot .. so much I couldn't know what to do with my self",
+		  "alignment" : "BOTTOM_CENTER",
+		  "offsetY" : "-25"
+        }
+      ]
+    },
+		// 2nd Segment
+	    {
+      "tickLength": "100",
+	  "actorArray": [
+        {
+		  "startTick": "0",
+          "tickLength": "30",
+          "displayText": "This is a test 1",
+		  "textRGBColor" : [255,255,0]
+        },
+		{
+		  "startTick": "31",
+          "tickLength": "50",
+          "displayText": "This is a test 1.3"
+        }
+      ]
+    }
+  ]
+}

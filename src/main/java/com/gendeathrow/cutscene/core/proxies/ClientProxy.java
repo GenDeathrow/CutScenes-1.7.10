@@ -5,6 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.gendeathrow.cutscene.client.ClientTickHandler;
 import com.gendeathrow.cutscene.client.Gui_EventHandler;
+import com.gendeathrow.cutscene.utils.Utils;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -36,6 +37,9 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		// TODO Auto-generated method stub
+		
+		Utils.LoadResources();
+		
 		super.preInit(event);
 	}
 

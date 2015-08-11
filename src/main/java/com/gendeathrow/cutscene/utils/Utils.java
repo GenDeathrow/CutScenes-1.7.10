@@ -87,11 +87,12 @@ public class Utils
 	        writer.newLine();
 
 	        byte[] buf = new byte[1024];
-
+	        System.out.println("test");
 	        out.putNextEntry(new JarEntry("assets/"));
+	        System.out.println("test2");
+	        out.putNextEntry(new JarEntry("assets/test/"));
 	        out.putNextEntry(new JarEntry("assets/"+CutScene.MODID+"/"));
 	        out.putNextEntry(new JarEntry("assets/"+CutScene.MODID+"/sounds/"));
-	        out.putNextEntry(new JarEntry("assets/"+CutScene.MODID+"/"));
 	        out.putNextEntry(new JarEntry("assets/"+CutScene.MODID+"/textures/"));
 	        out.putNextEntry(new JarEntry("assets/"+CutScene.MODID+"/textures/gui/"));
 

@@ -28,7 +28,7 @@ public class Gui_EventHandler {
 	public void onPlayerLoggedIn(Load event)
 	{
 		System.out.println("World Load: "+ event.world.getWorldInfo().getWorldName());
-		this.mc.displayGuiScreen(new CutSceneGui(GsonReader.GsonReadFromFile("test.json")));
+		//his.mc.displayGuiScreen(new CutSceneGui(GsonReader.GsonReadFromFile("test.json")));
 		
 	}
 

@@ -3,6 +3,7 @@ package com.gendeathrow.cutscene.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
@@ -40,6 +41,7 @@ public class CutScene
 
 		public SimpleNetworkWrapper network;
 		
+		public ConfigHandler config;
 		
 		@EventHandler
 		public void preInit(FMLPreInitializationEvent event)
@@ -47,6 +49,19 @@ public class CutScene
 			System.out.println("VERSION:"+ VERSION);
 			
 			logger = event.getModLog();
+			
+			this.config = new ConfigHandler(event);
+		    try
+		    {
+		      this.config.load();
+		    }
+		    catch (Exception e)
+		    {
+		      this.logger.log(Level.ERROR, "Error while loading config file. Why does this always happen");
+		      throw new RuntimeException(e);
+		    }
+		    
+			
 			
 			proxy.preInit(event);
 

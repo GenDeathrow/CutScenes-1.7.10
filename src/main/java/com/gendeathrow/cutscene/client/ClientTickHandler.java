@@ -1,9 +1,14 @@
 package com.gendeathrow.cutscene.client;
 
 
+import java.io.IOException;
+
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.client.Minecraft;
 
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
+import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.GsonReader;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 
@@ -30,13 +35,22 @@ public class ClientTickHandler{
 	@SideOnly(Side.CLIENT)
     public void RenderTickEvent(RenderTickEvent event) 
     {
+    	/**
+    	 * This loads up right after the Forge loading screen happens. 
+    	 */
         if ((event.type == Type.RENDER || event.type == Type.CLIENT) && event.phase == Phase.END) 
         {
             Minecraft mc = Minecraft.getMinecraft();
             if (firstload && mc != null) 
             {
-            	mc.displayGuiScreen(new CutSceneGui(GsonReader.GsonReadFromFile("test.json")));
+            	try{
+            		mc.displayGuiScreen(new CutSceneGui("/customcutscenes/splashscreen.json"));
+            	}catch(NullPointerException e)
+            	{
+            		CutScene.logger.log(Level.ERROR, "Could not load Custom Scene. You done messed up bro!");
+            	}
             	firstload = false;
+            	
             }
         }
         

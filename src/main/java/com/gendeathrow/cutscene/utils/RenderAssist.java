@@ -6,10 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.ByteOrder;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -44,6 +46,7 @@ public class RenderAssist {
     public static float zLevel;
     
 	private static TextureManager manager = Minecraft.getMinecraft().getTextureManager();
+	private static FontRenderer fontObj = Minecraft.getMinecraft().fontRenderer;
 
 
     /** 
@@ -196,6 +199,24 @@ public class RenderAssist {
      * @param height
      *            Height to render the sprite.
      */
+
+    public static void drawTexturedModalRect(float x, float y, float width, float height) 
+    {
+    	drawTexturedModalRect(x, y, width, height,  RenderAssist.zLevel);
+    }
+    
+    public static void drawTexturedModalRect(float x, float y, float width, float height, float zlevel) 
+    {
+        float f = 0.00390625F;
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(x + 0, y + height, zlevel, 0, 1);
+        tessellator.addVertexWithUV(x + width, y + height, zlevel, 1, 1);
+        tessellator.addVertexWithUV(x + width, y + 0, zlevel, 1, 0);
+        tessellator.addVertexWithUV(x + 0, y + 0, zlevel, 0, 0);
+        tessellator.draw();
+    }
+    
     public static void drawTexturedModalRect(float x, float y, float u, float v, float width, float height) {
         float f = 0.00390625F;
         Tessellator tessellator = Tessellator.instance;
@@ -204,17 +225,6 @@ public class RenderAssist {
         tessellator.addVertexWithUV(x + width, y + height, RenderAssist.zLevel, (u + width) * f, (v + height) * f);
         tessellator.addVertexWithUV(x + width, y + 0, RenderAssist.zLevel, (u + width) * f, (v + 0) * f);
         tessellator.addVertexWithUV(x + 0, y + 0, RenderAssist.zLevel, (u + 0) * f, (v + 0) * f);
-        tessellator.draw();
-    }
-
-    public static void drawTexturedModalRect(float x, float y, float width, float height) {
-        float f = 0.00390625F;
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(x + 0, y + height, RenderAssist.zLevel, 0, 1);
-        tessellator.addVertexWithUV(x + width, y + height, RenderAssist.zLevel, 1, 1);
-        tessellator.addVertexWithUV(x + width, y + 0, RenderAssist.zLevel, 1, 0);
-        tessellator.addVertexWithUV(x + 0, y + 0, RenderAssist.zLevel, 0, 0);
         tessellator.draw();
     }
     
@@ -484,8 +494,7 @@ public class RenderAssist {
 		return resource;
 	}
 	
-	
-	enum Alignment
+	public enum Alignment
 	{
 		TOP_LEFT("top_left"),
 		TOP_CENTER("top_center"),
@@ -506,7 +515,7 @@ public class RenderAssist {
 			this.alignment=alignment;
 		}
 		
-		public static void getScreenAlignment(Minecraft mc, Alignment alignment)
+		public static Alignment getScreenAlignment(Minecraft mc, Alignment alignment, int objWidth, int objHeight)
 		{
 			switch(alignment)
 			{
@@ -515,24 +524,40 @@ public class RenderAssist {
 					alignment.y = 0;
 					break;
 				case TOP_CENTER:
-					alignment.x = mc.displayWidth / 2;
+					alignment.x = (mc.currentScreen.width / 2) - (objWidth / 2);
 					alignment.y = 0;
 					break;
 				case TOP_RIGHT:
+					alignment.x = (mc.currentScreen.width ) - (objWidth);
+					alignment.y = 0;
 					break;
 				case CENTER_LEFT:
+					alignment.x = 0;
+					alignment.y = (mc.currentScreen.height / 2) - (objHeight / 2);
 					break;
 				case CENTER_CENTER:
+					alignment.x = (mc.currentScreen.width / 2) - (objWidth / 2);
+					alignment.y = (mc.currentScreen.height / 2) - (objHeight / 2);
 					break;
 				case CENTER_RIGHT:
+					alignment.x = (mc.currentScreen.width ) - (objWidth);
+					alignment.y = (mc.currentScreen.height / 2) - (objHeight / 2);
 					break;
 				case BOTTOM_LEFT:
+					alignment.x = 0;
+					alignment.y = (mc.currentScreen.height) - (objHeight);
 					break;
 				case BOTTOM_CENTER:
+					alignment.x = (mc.currentScreen.width / 2) - (objWidth / 2);
+					alignment.y = (mc.currentScreen.height) - (objHeight);
 					break;
 				case BOTTOM_RIGHT:
+					alignment.x = (mc.currentScreen.width ) - (objWidth);
+					alignment.y = (mc.currentScreen.height) - (objHeight);
 					break;				
 			}
+			
+			return alignment;
 		}
 		
 	}
@@ -546,7 +571,7 @@ public class RenderAssist {
 		Alignment[] alignments = Alignment.values();
 	    for (Alignment alignment : alignments)
 	    {
-	      if (alignment.alignment.equals(json.getAsString()))
+	      if (alignment.alignment.equals(json.getAsString().toLowerCase()))
 	        return alignment;
 	    }
 	    return null;
