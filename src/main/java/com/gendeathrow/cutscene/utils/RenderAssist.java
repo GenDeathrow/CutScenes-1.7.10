@@ -202,19 +202,27 @@ public class RenderAssist {
 
     public static void drawTexturedModalRect(float x, float y, float width, float height) 
     {
-    	drawTexturedModalRect(x, y, width, height,  RenderAssist.zLevel);
+    	drawTexturedModalRect(x, y, width, height,  255);
     }
     
-    public static void drawTexturedModalRect(float x, float y, float width, float height, float zlevel) 
+    public static void drawTexturedModalRect(float x, float y, float width, float height, int alpha) 
     {
-        float f = 0.00390625F;
+
+		float f = (float)alpha / 255.0F;
+		
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
-        tessellator.addVertexWithUV(x + 0, y + height, zlevel, 0, 1);
-        tessellator.addVertexWithUV(x + width, y + height, zlevel, 1, 1);
-        tessellator.addVertexWithUV(x + width, y + 0, zlevel, 1, 0);
-        tessellator.addVertexWithUV(x + 0, y + 0, zlevel, 0, 0);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);		
+		GL11.glColor4f(1, 1, 1, f);
+        tessellator.addVertexWithUV(x + 0, y + height, RenderAssist.zLevel, 0, 1);
+        tessellator.addVertexWithUV(x + width, y + height, RenderAssist.zLevel, 1, 1);
+        tessellator.addVertexWithUV(x + width, y + 0, RenderAssist.zLevel, 1, 0);
+        tessellator.addVertexWithUV(x + 0, y + 0, RenderAssist.zLevel, 0, 0);
         tessellator.draw();
+        
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glDisable(GL11.GL_BLEND);
     }
     
     public static void drawTexturedModalRect(float x, float y, float u, float v, float width, float height) {

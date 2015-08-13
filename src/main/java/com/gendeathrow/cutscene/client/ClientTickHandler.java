@@ -47,7 +47,8 @@ public class ClientTickHandler{
             		mc.displayGuiScreen(new CutSceneGui("/customcutscenes/splashscreen.json"));
             	}catch(NullPointerException e)
             	{
-            		CutScene.logger.log(Level.ERROR, "Could not load Custom Scene. You done messed up bro!");
+            		CutScene.logger.log(Level.ERROR, "Could not load Custom Scene. You done messed up bro! \n " + e);
+            		e.printStackTrace();
             	}
             	firstload = false;
             	

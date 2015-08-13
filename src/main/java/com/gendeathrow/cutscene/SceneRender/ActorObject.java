@@ -10,9 +10,11 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.util.Color;
-import org.lwjgl.util.ReadableColor;
+import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL11;
 
+import com.gendeathrow.cutscene.SceneRender.transitions.Transition;
+import com.gendeathrow.cutscene.SceneRender.transitions.Transition.TransitionType;
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
@@ -31,17 +33,17 @@ import cpw.mods.fml.relauncher.SideOnly;
  * Actors are images / sound / text added to a current segment or cutscene
  * @author GenDeathrow
  */
-public class ActorObject 
+public class ActorObject implements Comparable
 {
 	@SerializedName("resource")
 	private String resourcePath;
 	private String displayText;
 	private ActorType type;
+	public SegmentObject segment;
 	
 	public int tickLength;
 	public int actorTick;
 	public int startTick;
-	public int endTick;
 	
 	private int offsetX;
 	private int offsetY;
@@ -52,7 +54,12 @@ public class ActorObject
 	private int imageWidth;
 	private int imageHeight;
 	
-	private float zLevel;
+	public TransitionType transitionIn;
+	public TransitionType transitionOut;
+	
+	private Transition transition;
+	
+	public int zLevel;
 	
 	public transient ResourceLocation resourceLocation;
 	
@@ -65,14 +72,21 @@ public class ActorObject
 	public ActorObject()
 	{
 		this.type = ActorType.TEXT;
-		this.endTick = 60;
 		this.alignment = RenderAssist.Alignment.CENTER_CENTER;
 		this.textRGBColor = new int[]{255,255,255};
+		this.transition = new Transition();
+		this.transitionIn = TransitionType.Fade;
+		this.transitionOut = TransitionType.Fade;
+		this.zLevel = 1;
+		
+		System.out.println(this.transitionIn.toString());
 	}
 	
 	
 	public void init()
 	{
+
+		
 		if(type == ActorType.IMAGE && this.resourcePath != null)
 		{
 			try 
@@ -81,7 +95,7 @@ public class ActorObject
 				
 			} catch (IOException e) 
 			{
-				//CutScene.logger.log(Level.ERROR, "Failed to load!  \""+ Loader.instance().getConfigDir()+"\\"+this.resourcePath+"\" "+ e);
+				CutScene.logger.log(Level.ERROR, "Failed to load!  \""+ Loader.instance().getConfigDir()+"\\"+this.resourcePath+"\" "+ e);
 				e.printStackTrace();  
 			}
 		}
@@ -105,15 +119,12 @@ public class ActorObject
 		return this.startTick + this.tickLength;
 	}
 	
-	public String getDisplayText()
-	{
-		return this.displayText;
-	}
-	
 	@SideOnly(Side.CLIENT)
 	public void DrawActor(CutSceneGui cutSceneGui, SegmentObject segment, Minecraft mc, FontRenderer fontObj)
 	{
 		//System.out.println("type:"+ this.type.type);
+		
+		this.actorTick++;
 		
 		if(type == ActorType.IMAGE)
 		{
@@ -127,7 +138,8 @@ public class ActorObject
 		{
 			//this.playSound();
 		}
-		fontObj.drawString("Actor Frame:"+ this.actorTick ,0, 30, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+		//fontObj.drawString("Actor Frame:"+ this.actorTick ,0, 30, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+
 	}
 	
 	
@@ -136,6 +148,9 @@ public class ActorObject
 		List wrap = fontObj.listFormattedStringToWidth(displayText, mc.currentScreen.width - 30);
 		ListIterator itWrap = wrap.listIterator();
 
+		this.transition.update(this);
+		
+		
 		int index = 0;
 		while(itWrap.hasNext())
 		{
@@ -146,7 +161,10 @@ public class ActorObject
 			
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
 
-			fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], 255));
+			GL11.glEnable(GL11.GL_BLEND);
+			
+			fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
+			
 			index++;
 		}
 
@@ -158,10 +176,12 @@ public class ActorObject
 		if(this.resourceLocation == null) return;
 		
 		this.alignment.getScreenAlignment(mc, alignment, this.imageWidth, this.imageHeight);
+
+		this.transition.update(this);
 		
 		RenderAssist.bindTexture(this.resourceLocation);
-		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, this.imageWidth, this.imageHeight, this.zLevel);
-		
+		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, this.imageWidth, this.imageHeight, this.transition.alpha);
+
 		//System.out.println(alignment.x +" "+ alignment.y+ " "+ this.offsetY+" "+ this.posX);
 	}
 	
@@ -199,6 +219,13 @@ public class ActorObject
 	    return null;
 	  }
 
+	}
+
+	@Override
+	public int compareTo(Object arg0) 
+	{
+		int actorCompare = ((ActorObject)arg0).zLevel;
+		return this.zLevel-actorCompare;
 	}
 	
 }

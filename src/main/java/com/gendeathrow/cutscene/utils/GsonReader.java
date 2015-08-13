@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Level;
 
 import com.gendeathrow.cutscene.SceneRender.ActorObject;
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
+import com.gendeathrow.cutscene.SceneRender.transitions.Transition;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,24 +31,22 @@ public class GsonReader
 		  //Gson gson = new Gson();  
 		    GsonBuilder gsonBuilder = new GsonBuilder();
 		    ActorObject ActorObject = new ActorObject();
+		    Transition Transition = new Transition();
 		    
 		    RenderAssist RenderAssist = new RenderAssist();
 		    
 		    gsonBuilder.registerTypeAdapter(RenderAssist.Alignment.class, RenderAssist.new AlignmentDeserializer());
 			gsonBuilder.registerTypeAdapter(ActorObject.ActorType.class, ActorObject.new ActorTypeDeserializer());
+			gsonBuilder.registerTypeAdapter(Transition.TransitionType.class, Transition.new TransitionTypeDeserializer());
 			
 		    Gson gson = gsonBuilder.create();
 
-		    int[] test = new int[]{0,1,2,3,4,5,6,7,8,9};
-		    
-		    System.out.println(gson.toJson(test)+ " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-		  
 		  try {  
 		    
 		   System.out.println("Reading JSON from a file");  
-		   System.out.println("----------------------------"+ Loader.instance().getConfigDir()+"\\"+ filePath);  
+		   System.out.println("----------------------------"+ Loader.instance().getConfigDir()+"/"+ filePath);  
 		     
-		   BufferedReader br = new BufferedReader( new FileReader(Loader.instance().getConfigDir()+"\\"+filePath));  
+		   BufferedReader br = new BufferedReader( new FileReader(Loader.instance().getConfigDir()+"/"+filePath));  
 		     
 		   SceneObject screenObj = gson.fromJson(br, SceneObject.class);
 		   

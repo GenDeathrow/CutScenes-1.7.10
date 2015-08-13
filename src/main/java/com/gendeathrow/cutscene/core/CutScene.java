@@ -82,29 +82,6 @@ public class CutScene
 		{
 			proxy.postInit(event);
 			
-//			//SceneObject test = new GsonReader().GsonReadFromFile(null);
-//			
-//			//System.out.println("Closeing Ticks"+ test.closeOnTicks +"  bk:"+ test.defaultBackgroundColor);
-//			
-//			ArrayList segs = test.screenSegments;
-//			
-//			for(Object seg : segs)
-//			{
-//				
-//				
-////				System.out.println(seg.getClass().getSimpleName());
-////				SegmentObject bes = (SegmentObject) seg;
-////				System.out.println("segments:"+ bes.getTickLength());
-//				
-//			}
-//////			Iterator Segments = test.getSegmentIterator();
-////			while(Segments.hasNext())
-////			{
-////				SegmentObject segment = (SegmentObject) Segments.next();
-////				
-////				System.out.println("Segment: "+ segment.getTickLength());
-////			}
-			
 		}
 		
 		@EventHandler

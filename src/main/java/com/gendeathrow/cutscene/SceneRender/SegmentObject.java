@@ -1,6 +1,7 @@
 package com.gendeathrow.cutscene.SceneRender;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,10 +26,25 @@ public class SegmentObject
 	
 	public void init()
 	{
+		
+
 		for(ActorObject actor : this.actorArray)
 		{
 				actor.init();
+				
+				System.out.println(actor.zLevel +"<<< ");
 		}
+		
+		Collections.sort(this.actorArray);
+		
+		for(ActorObject actor : this.actorArray)
+		{
+				System.out.println(actor.zLevel +"<<< ");
+		}
+		
+		System.out.println(Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode());
+		
+		// Sort ActorList by Z level
 			
 	}
 	
