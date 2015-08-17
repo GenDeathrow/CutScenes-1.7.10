@@ -25,7 +25,7 @@ apply plugin: 'forge'
 
 version = "GD_CCS_VER"
 group= "com.gendeathrow.cutscene" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "cutscene"
+archivesBaseName = "CustomCutScene"
 
 minecraft {
     version = "1.7.10-10.13.4.1448-1.7.10"

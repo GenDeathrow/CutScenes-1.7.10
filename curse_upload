@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILE_NAME=`echo "Skillz-GD_SK_VER.jar"`
+FILE_NAME=`echo "CutScenes-1.7.10-GD_SK_VER.jar"`
 FILE_LOCATION=`echo "./build/libs/$FILE_NAME"`
 CHANGE_LOG=`git log -1 --pretty=format:"%B"`
 
