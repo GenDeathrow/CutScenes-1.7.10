@@ -1,0 +1,29 @@
+echo Creating Dev WordPress Post
+
+git log -1 --pretty=format:"%B" > changelog.txt
+
+# Remove 1&2 line from 
+sed '1d' changelog.txt > tmpfile; 
+mv tmpfile changelog.txt
+sed '2d' changelog.txt > tmpfile; 
+mv tmpfile changelog.txt
+# Add Html Bulletins to begining and end of line
+sed 's/^/\<li\>/g' changelog.txt > tmpfile 
+mv tmpfile changelog.txt
+sed 's/$/\<\/li\>/' changelog.txt > tmpfile
+mv tmpfile changelog.txt
+
+#Add file into Varable 
+CHANGE_LOG=$(cat changelog.txt)
+
+# Send update to Wordpress Site
+curl \
+ -H "authorization:  Bearer ${WP_API_KEY}" \
+ --data-urlencode "title=Custom CutScenes Update v${newversion}" \
+ --data-urlencode "content= <strong>ChangeLog:<\/strong> <br> <ul> ${CHANGE_LOG} </ul>" \
+ --data-urlencode 'tags=CustomCutScenes' \
+ --data-urlencode 'categories=Update' \
+ 'https://public-api.wordpress.com/rest/v1.1/sites/gendeathrow.wordpress.com/posts/new/' > /dev/null
+ 
+ 
+
