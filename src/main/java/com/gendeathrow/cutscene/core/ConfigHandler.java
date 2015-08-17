@@ -35,6 +35,7 @@ public class ConfigHandler
 		    }
 		 
 		    File splashScreenConfig = new File(configFolder, "splashscreen.json");
+		    
 		    if (!splashScreenConfig.exists())
 		    {
 		      InputStream input = null;
@@ -48,6 +49,18 @@ public class ConfigHandler
 		        
 		        output = new FileOutputStream(new File(configFolder, "/assets/logo.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/logo.png");
+		        ByteStreams.copy(input, output);
+		        
+		        output = new FileOutputStream(new File(configFolder, "/assets/cat1.png"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/cat1.png");
+		        ByteStreams.copy(input, output);
+		        
+		        output = new FileOutputStream(new File(configFolder, "/assets/cat2.png"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/cat2.png");
+		        ByteStreams.copy(input, output);
+		        
+		        output = new FileOutputStream(new File(configFolder, "/assets/world.png"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/world.png");
 		        ByteStreams.copy(input, output);
 		      }
 		      catch (FileNotFoundException e1)

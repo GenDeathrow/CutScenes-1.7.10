@@ -22,10 +22,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientTickHandler{
 
-	
-	
-	
-	
 	/**
 	 *  Boolean for First time Game loads up, just before Main menu starts.
 	 */
@@ -55,8 +51,5 @@ public class ClientTickHandler{
             }
         }
         
-	//	RenderAssist.bindExternalTexture("config/test.png");
-		//System.out.println(this.startX +" "+ this.startY+" "+ this.endX+" "+ this.endY);
-		//RenderAssist.drawTexturedModalRect(0, 0, 0, 0, 128, 128);
     }
 }

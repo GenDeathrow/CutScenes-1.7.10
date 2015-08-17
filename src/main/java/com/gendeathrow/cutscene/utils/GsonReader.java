@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 
 import com.gendeathrow.cutscene.SceneRender.ActorObject;
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
-import com.gendeathrow.cutscene.SceneRender.transitions.Transition;
+import com.gendeathrow.cutscene.SceneRender.Transition;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,18 +27,18 @@ public class GsonReader
 	public static SceneObject GsonReadFromFile(String filePath) throws StackOverflowError
 	{
 		try{
-
-		  //Gson gson = new Gson();  
-		    GsonBuilder gsonBuilder = new GsonBuilder();
 		    ActorObject ActorObject = new ActorObject();
 		    Transition Transition = new Transition();
-		    
 		    RenderAssist RenderAssist = new RenderAssist();
-		    
+
+			
+		  //Gson gson = new Gson();  
+		    GsonBuilder gsonBuilder = new GsonBuilder();
+
 		    gsonBuilder.registerTypeAdapter(RenderAssist.Alignment.class, RenderAssist.new AlignmentDeserializer());
 			gsonBuilder.registerTypeAdapter(ActorObject.ActorType.class, ActorObject.new ActorTypeDeserializer());
 			gsonBuilder.registerTypeAdapter(Transition.TransitionType.class, Transition.new TransitionTypeDeserializer());
-			
+
 		    Gson gson = gsonBuilder.create();
 
 		  try {  

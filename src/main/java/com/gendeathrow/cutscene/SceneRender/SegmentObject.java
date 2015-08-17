@@ -12,6 +12,7 @@ import com.gendeathrow.cutscene.utils.RenderAssist;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class SegmentObject
 {
 
@@ -31,18 +32,9 @@ public class SegmentObject
 		for(ActorObject actor : this.actorArray)
 		{
 				actor.init();
-				
-				System.out.println(actor.zLevel +"<<< ");
 		}
 		
 		Collections.sort(this.actorArray);
-		
-		for(ActorObject actor : this.actorArray)
-		{
-				System.out.println(actor.zLevel +"<<< ");
-		}
-		
-		System.out.println(Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode());
 		
 		// Sort ActorList by Z level
 			
@@ -50,7 +42,20 @@ public class SegmentObject
 	
 	public int getTickLength()
 	{
-		return this.tickLength;
+		int totalTicks = 0;
+		int check = 0;
+		int longestDuration = 0;
+		for(ActorObject actor : this.actorArray)
+		{
+			check = (actor.tickLength + actor.startTick);
+			if(check > longestDuration) longestDuration = check; 
+			//System.out.println(check +" > "+ longestDuration );
+		}
+		totalTicks += check + 10;
+
+		//System.out.println("totalTicks= "+ totalTicks );
+
+		return totalTicks;
 	}
 	
 	public void setTickLength(int length)
@@ -78,7 +83,7 @@ public class SegmentObject
 	public void DrawSegment(CutSceneGui cutSceneGui, Minecraft mc, FontRenderer fontObj)
 	{
 			int width = mc.currentScreen.width;
-			fontObj.drawString("CurSegment: "+cutSceneGui.currentPhase + " Segment Frame:"+ this.segmentTick,width/2-30, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+			if(cutSceneGui.scene.showDebug) fontObj.drawString("CurSegment: "+cutSceneGui.currentPhase + " Segment Frame:"+ this.segmentTick,width/2-30, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 
 			this.segmentTick++;
 			

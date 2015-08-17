@@ -1,9 +1,7 @@
-package com.gendeathrow.cutscene.SceneRender.transitions;
+package com.gendeathrow.cutscene.SceneRender;
 
 import java.lang.reflect.Type;
 
-import com.gendeathrow.cutscene.SceneRender.ActorObject;
-import com.gendeathrow.cutscene.SceneRender.ActorObject.ActorType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -31,19 +29,17 @@ public class Transition
 	
 	public void update(ActorObject actor)
 	{
-		
-		if(actor.actorTick <= actor.transitionIn.duration && TransitionType.isType(actor.transitionIn)) Fade(actor, "in");
-		else if(actor.actorTick >= (actor.tickLength - actor.transitionOut.duration) && TransitionType.isType(actor.transitionOut)) Fade(actor, "out");
+
+		if(actor.actorTick <= actor.transitionIn.duration && TransitionType.isType(actor.transitionIn)) Fade(actor, true);
+		else if(actor.actorTick >= (actor.tickLength - actor.transitionOut.duration) && TransitionType.isType(actor.transitionOut)) Fade(actor, false);
 		
 		
 		this.transitionTicks++;
 	}
 	
-	public void Fade(ActorObject actor, String fadeDir)
+	public void Fade(ActorObject actor, boolean transitionIn)
 	{
-		
-		
-		if(fadeDir == "in") 
+		if(transitionIn) 
 		{
 			int fadeSteps = ( 255 / actor.transitionIn.duration);
 			
@@ -51,9 +47,7 @@ public class Transition
 			
 			this.alpha = (this.alpha + fadeSteps) > 255 ? 255 : this.alpha + fadeSteps;
 			
-		}
-		
-		if(fadeDir == "out")
+		}else
 		{
 			int fadeSteps = ( 255 / actor.transitionOut.duration);
 			
@@ -62,8 +56,10 @@ public class Transition
 			this.alpha = (this.alpha - fadeSteps) < 0 ? 0 : this.alpha - fadeSteps;
 		}
 		this.init = true;
-		
-		
+	}
+	
+	public void Slide(ActorObject actor, boolean transitionIn)
+	{
 		
 	}
 	
@@ -76,12 +72,19 @@ public class Transition
 	
 	public enum TransitionType
 	{
-		Fade("fade", 5, 5),
-		Slide("slide", 5, 5);
+		Fade("fade", 5, 0),
+		Slide("slide", 5, 1);
 		
 		String type;
 		int duration;
-		//int outDuration;
+		int side;
+		
+		TransitionType(String type, int duration)
+		{
+			this.type=type;
+			this.duration = duration;
+			this.side = 0;
+		}
 		
 		TransitionType(String type, int duration, int outDuration)
 		{
@@ -106,7 +109,12 @@ public class Transition
 			this.duration = newDuration;
 			return this;
 		}
-		
+
+		TransitionType setSide(int side)
+		{
+			this.side = side;
+			return this;
+		}
 	}
 	
 	public class TransitionTypeDeserializer implements JsonDeserializer<TransitionType>
@@ -119,9 +127,18 @@ public class Transition
 	    {
 	    	JsonArray data = json.getAsJsonArray();
 	    	
-	    System.out.println(data.get(0).getAsString());	
 	      if (type.type.equals(data.get(0).getAsString()))
-	        return type.setInDuration(data.get(1).getAsInt());
+	      {
+	    	  if(data.size() == 3)
+	    	  {
+	    		  return type.setInDuration(data.get(1).getAsInt()).setSide(data.get(2).getAsInt());
+	    	  }
+	    	  else if(data.size() == 2)
+	    	  {
+	    		  return type.setInDuration(data.get(1).getAsInt());
+	    	  }
+	        
+	      }
 	    }
 	    return null;
 	  }

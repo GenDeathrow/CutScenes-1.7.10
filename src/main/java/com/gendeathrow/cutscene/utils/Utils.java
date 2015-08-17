@@ -10,11 +10,24 @@ import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.Language;
+
+import com.gendeathrow.cutscene.SceneRender.ActorObject;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.core.Settings;
 
 public class Utils 
 {
+	
+	
+	
+	public static String getTranslation(String[] textList)
+	{
+		Language currentLang = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
+		
+		return null;
+	}
 
 	public static void LoadResources()
 	{

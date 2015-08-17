@@ -38,6 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author maxpowa
  * 
  */
+@SideOnly(Side.CLIENT)
 public class RenderAssist {
 
     /**
@@ -493,7 +494,7 @@ public class RenderAssist {
 		
         BufferedImage skinBR = ImageIO.read(file);
         
-        System.out.println("image height"+ skinBR.getHeight());
+        //System.out.println("image height"+ skinBR.getHeight());
         
 		DynamicTexture texture = new DynamicTexture(skinBR);
         

@@ -7,11 +7,15 @@ import com.gendeathrow.cutscene.utils.RenderAssist;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class SceneObject 
 {
 
-	public int closeOnTicks;
+	public boolean finalize;
+	public boolean showDebug;
+	
 	private int defaultBackgroundColor;
+	
 
 	private String backgroundTexturePath;
 	//public ResourceLocation backgroundResourceLocation;
@@ -21,7 +25,11 @@ public class SceneObject
 	private int curSegment;
 	
 	
-	public SceneObject(){}
+	public SceneObject()
+	{
+		this.finalize = false;
+		this.showDebug = false;
+	}
 	
 	
 	public void init()
@@ -38,13 +46,12 @@ public class SceneObject
 	 */
 	public int getCloseOnTicks()
 	{
-		return this.closeOnTicks;
-	}
-	
-	public SceneObject setCloseOnTicks(int close)
-	{
-		this.closeOnTicks = close;
-		return this;
+		int totalTicks = 0;
+		for(SegmentObject segment : this.screenSegments)
+		{
+			totalTicks += segment.getTickLength() + 10;
+		}
+		return totalTicks;
 	}
 	
 	/** 

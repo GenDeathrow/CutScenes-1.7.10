@@ -1,9 +1,9 @@
 {
-  "closeOnTicks": "220",
+  "finalize" : true,
+  "showDebug" : false,
   "screenSegments": [
     {
 		// 1st Segment
-      "tickLength": "120", 
       "actorArray": [
         {
 		  "type": "image",
@@ -11,31 +11,93 @@
 		  "alignment" : "CENTER_CENTER",
 		  "imageWidth": "256",
 		  "imageHeight": "45",
-          "tickLength": "120"
-        },
+          "tickLength": "120",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "5"
+		},
         {
 		  "startTick": "0",
-          "tickLength": "50",
-          "displayText": "Screen and Text Test and we will see if this works.. cause if it doesn't I dont know what to do next, but if it didn't work I would really hate it.. alot .. so much I couldn't know what to do with my self",
+          "tickLength": "120",
+          "displayText": "Cutscene Demo Created by GenDeathrow",
 		  "alignment" : "BOTTOM_CENTER",
-		  "offsetY" : "-25"
+		  "offsetY" : "-25",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "2"
         }
       ]
     },
-		// 2nd Segment
 	    {
-      "tickLength": "100",
+		// 2nd Segment
 	  "actorArray": [
+		{
+		  "type": "image",
+	      "resource": "world.png",
+		  "alignment" : "CENTER_CENTER",
+          "tickLength": "330",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "1"
+		},
+		{
+		  "type": "image",
+	      "resource": "cat2.png",
+		  "alignment" : "center_Right",
+		  "imageWidth": "200",
+		  "imageHeight": "200",
+		  "startTick": "120",
+          "tickLength": "220",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "2"
+		},
+		{
+		  "type": "image",
+	      "resource": "cat2.png",
+		  "alignment" : "CENTER_Left",
+		  "imageWidth": "200",
+		  "imageHeight": "200",
+		  "startTick": "120",
+          "tickLength": "220",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "2"
+		},
+		{
+		  "type": "image",
+	      "resource": "cat1.png",
+		  "alignment" : "CENTER_CENTER",
+		  "offsetX" : "45",
+		  "imageWidth": "500",
+		  "imageHeight": "333",
+		  "startTick": "200",
+          "tickLength": "120",
+		  "transitionIn" : ["fade",1],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "10"
+		},
         {
 		  "startTick": "0",
-          "tickLength": "30",
-          "displayText": "This is a test 1",
-		  "textRGBColor" : [255,255,0]
+          "tickLength": "220",
+          "displayText": "In a World...",
+		  "textRGBColor": [255,255,0],
+		  "alignment" : "Top_CENTER",
+		  "offsetY" : "+25",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "20"
         },
 		{
-		  "startTick": "31",
-          "tickLength": "50",
-          "displayText": "This is a test 1.3"
+		  "startTick": "120",
+          "tickLength": "120",
+          "displayText": "Ruled by Laser Cats!",
+		  "textRGBColor": [255,255,0],
+		  "alignment" : "Top_CENTER",
+		  "offsetY" : "+45",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "20"
         }
       ]
     }

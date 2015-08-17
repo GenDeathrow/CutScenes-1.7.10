@@ -1,9 +1,13 @@
 package com.gendeathrow.cutscene.SceneRender;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
+
+import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
@@ -13,8 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
-import com.gendeathrow.cutscene.SceneRender.transitions.Transition;
-import com.gendeathrow.cutscene.SceneRender.transitions.Transition.TransitionType;
+import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
@@ -39,6 +42,7 @@ public class ActorObject implements Comparable
 	private String resourcePath;
 	private String displayText;
 	private ActorType type;
+	
 	public SegmentObject segment;
 	
 	public int tickLength;
@@ -78,8 +82,6 @@ public class ActorObject implements Comparable
 		this.transitionIn = TransitionType.Fade;
 		this.transitionOut = TransitionType.Fade;
 		this.zLevel = 1;
-		
-		System.out.println(this.transitionIn.toString());
 	}
 	
 	
@@ -91,11 +93,16 @@ public class ActorObject implements Comparable
 		{
 			try 
 			{
-				this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+"\\"+this.resourcePath);
+				this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator +this.resourcePath);
+
+				BufferedImage getImage = ImageIO.read(new File(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator +this.resourcePath));
+				
+				if(this.imageHeight == 0) this.imageHeight = getImage.getHeight();
+				if(this.imageWidth == 0) this.imageWidth = getImage.getWidth();
 				
 			} catch (IOException e) 
 			{
-				CutScene.logger.log(Level.ERROR, "Failed to load!  \""+ Loader.instance().getConfigDir()+"\\"+this.resourcePath+"\" "+ e);
+				CutScene.logger.log(Level.ERROR, "Failed to load!  \""+ Loader.instance().getConfigDir() + File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator + this.resourcePath+"\" "+ e);
 				e.printStackTrace();  
 			}
 		}
@@ -150,25 +157,26 @@ public class ActorObject implements Comparable
 
 		this.transition.update(this);
 		
-		
+		GL11.glEnable(GL11.GL_BLEND);
+
 		int index = 0;
 		while(itWrap.hasNext())
 		{
 			int lineOffset = index * fontObj.FONT_HEIGHT + 2;
+	
 			String line = (String) itWrap.next();
 			
 			int textWidth = fontObj.getStringWidth(line);
-			
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
 
-			GL11.glEnable(GL11.GL_BLEND);
-			
 			fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
 			
 			index++;
 		}
+		GL11.glDisable(GL11.GL_BLEND);
 
 	}
+	
 	
 	private void DrawImage(Minecraft mc)
 	{

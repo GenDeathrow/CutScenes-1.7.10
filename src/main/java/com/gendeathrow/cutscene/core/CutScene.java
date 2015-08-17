@@ -25,10 +25,10 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 public class CutScene
 {
 	    public static final String MODID = "cutscene";
-	    public static final String VERSION = "GD_CS_VER";
-	    public static final String Name = "CutScene";
+	    public static final String VERSION = "GD_CCS_VER";
+	    public static final String Name = "CustomCutScene";
 	    public static final String Proxy = "com.gendeathrow.cutscene.core.proxies";
-	    public static final String Channel = "SK_GenD";
+	    public static final String Channel = "CCS_GenD";
 		private static final String GsonRea = null;
 	    
 	    public static  Logger logger;
@@ -46,7 +46,7 @@ public class CutScene
 		@EventHandler
 		public void preInit(FMLPreInitializationEvent event)
 		{
-			System.out.println("VERSION:"+ VERSION);
+			System.out.println(Name +" VERSION:"+ VERSION);
 			
 			logger = event.getModLog();
 			

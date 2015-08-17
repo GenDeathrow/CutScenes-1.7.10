@@ -34,11 +34,7 @@ public class CutSceneGui extends GuiScreen
 	public MovieReader Movie;
 	public BufferedImage[] frames;
 	
-	public CutSceneGui()
-	{
-		this.renderTicks = 0;
-		this.closeOnTick = 90;
-	}
+	public CutSceneGui() {}
 	
 	public CutSceneGui(String scenePath)
 	{
@@ -49,20 +45,6 @@ public class CutSceneGui extends GuiScreen
 		this.closeOnTick = this.scene.getCloseOnTicks();
 		this.segmentList = this.scene.screenSegments;
 		this.scene.init();
-//		this.Movie = new MovieReader();
-//		try 
-//		{
-//			this.Movie.read(new File(Loader.instance().getConfigDir()+"/CustomCutScenes/assets/video1.avi"));
-//			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		//this.Movie = new AVIReader(new File("/config/CustomCutScenes/assets/video1.avi"));
-		//this.Movie = Registry.getInstance().getReader(new File("/config/CustomCutScenes/assets/video1.avi"));
-		
-		
 	}
 	
     /**
@@ -100,20 +82,8 @@ public class CutSceneGui extends GuiScreen
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
 	{
-		
-		
-//		try {
-//			this.Movie.draw();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		if(this.renderTicks >= this.closeOnTick) 
-		{
-			this.button.visible = true;
-			
-			//mc.displayGuiScreen(null);
-		}
+		if(this.renderTicks >= this.closeOnTick && !this.scene.finalize)    this.button.visible = true;
+		if(this.renderTicks >= this.closeOnTick && this.scene.finalize) 	mc.displayGuiScreen(null);
 		
 		this.drawBackground();
 
@@ -122,7 +92,8 @@ public class CutSceneGui extends GuiScreen
 			((SegmentObject)this.segmentList.get(this.currentPhase)).DrawSegment(this, Minecraft.getMinecraft(), this.fontRendererObj);
 		}
 		
-		this.fontRendererObj.drawString("Render Ticks: "+this.renderTicks,0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+		
+		if(this.scene.showDebug) this.fontRendererObj.drawString("Render Ticks: "+this.renderTicks,0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 		
 		super.drawScreen(par1, par2, par3);
 		this.renderTicks++;
