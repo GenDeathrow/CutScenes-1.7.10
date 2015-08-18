@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILE_NAME=`echo "CutScenes-1.7.10-GD_CCS_VER.jar"`
+FILE_NAME=`echo "CustomCutScene-1.7.10-GD_CCS_VER.jar"`
 FILE_LOCATION=`echo "./build/libs/$FILE_NAME"`
 CHANGE_LOG=`git log -1 --pretty=format:"%B"`
 
@@ -8,7 +8,8 @@ CHANGE_LOG=`git log -1 --pretty=format:"%B"`
 #CURSE_ID=`echo "$CURSE_PROJECT_ID"`
 
 #See https://github.com/curseforge/api for how to retrieve game version numbers
-JSON=`printf '{"changelog": "%s", "gameVersions": [4455], "releaseType": "alpha"}' "$CHANGE_LOG"`
+#https://minecraft.curseforge.com/api/game/versions?token=myapitoken
+JSON=`printf '{"changelog": "%s", "gameVersions": [4449], "releaseType": "alpha"}' "$CHANGE_LOG"`
 
 echo "Uploading $FILE_NAME to Curse Forge..."
 echo
