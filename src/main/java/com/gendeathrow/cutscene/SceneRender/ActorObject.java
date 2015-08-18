@@ -100,9 +100,9 @@ public class ActorObject implements Comparable
 		{
 			try 
 			{
-				this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator +this.resourcePath);
+				this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath);
 
-				BufferedImage getImage = ImageIO.read(new File(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator +this.resourcePath));
+				BufferedImage getImage = ImageIO.read(new File(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath));
 				
 				if(this.imageHeight == 0) 
 				{
