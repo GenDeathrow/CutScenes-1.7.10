@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy{
 	public void preInit(FMLPreInitializationEvent event) {
 		// TODO Auto-generated method stub
 		
-		Utils.LoadResources();
+		//Utils.LoadResources();
 		
 		super.preInit(event);
 	}

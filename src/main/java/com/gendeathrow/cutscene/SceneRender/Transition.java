@@ -43,15 +43,11 @@ public class Transition
 		{
 			int fadeSteps = ( 255 / actor.transitionIn.duration);
 			
-			if(this.init == false) this.alpha = 0;
-			
 			this.alpha = (this.alpha + fadeSteps) > 255 ? 255 : this.alpha + fadeSteps;
 			
 		}else
 		{
 			int fadeSteps = ( 255 / actor.transitionOut.duration);
-			
-			if(this.init == false) this.alpha = 255;
 			
 			this.alpha = (this.alpha - fadeSteps) < 0 ? 0 : this.alpha - fadeSteps;
 		}
@@ -61,13 +57,6 @@ public class Transition
 	public void Slide(ActorObject actor, boolean transitionIn)
 	{
 		
-	}
-	
-	public int getAlpha()
-	{
-		int alpha = 255;
-		
-		return alpha; 
 	}
 	
 	public enum TransitionType

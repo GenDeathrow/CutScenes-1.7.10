@@ -2,6 +2,10 @@ package com.gendeathrow.cutscene.SceneRender;
 
 import java.util.ArrayList;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+
+import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 
 import cpw.mods.fml.relauncher.Side;
@@ -23,6 +27,7 @@ public class SceneObject
 	/** Segments contain new frames within the current Cutscene Object	 */
 	public ArrayList<SegmentObject> screenSegments;
 	private int curSegment;
+	public transient CutSceneGui guiParent;
 	
 	
 	public SceneObject()
@@ -32,11 +37,13 @@ public class SceneObject
 	}
 	
 	
-	public void init()
+	public void init(CutSceneGui gui)
 	{
+		this.guiParent = gui;
+		
 		for(SegmentObject segment : this.screenSegments)
 		{
-			segment.init();
+			segment.init(this);
 		}
 	}
 	
@@ -97,6 +104,12 @@ public class SceneObject
 	@SideOnly(Side.CLIENT)
 	public void DrawCutScene()
 	{
+		
+		if(this.screenSegments != null && this.guiParent.currentPhase <= this.screenSegments.size()-1)
+		{
+			((SegmentObject)this.screenSegments.get(this.guiParent.currentPhase)).DrawSegment(this, Minecraft.getMinecraft());
+		}
+		
 		
 	}
 	

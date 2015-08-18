@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.utils.RenderAssist;
@@ -20,18 +19,20 @@ public class SegmentObject
 	public ArrayList<ActorObject> actorArray;
 	public int segmentTick;
 	
+	public transient SceneObject scene;
+	
 	public SegmentObject()
 	{
 	
 	}
 	
-	public void init()
+	public void init(SceneObject sceneObj)
 	{
-		
+		this.scene = sceneObj;
 
 		for(ActorObject actor : this.actorArray)
 		{
-				actor.init();
+				actor.init(this);
 		}
 		
 		Collections.sort(this.actorArray);
@@ -49,12 +50,8 @@ public class SegmentObject
 		{
 			check = (actor.tickLength + actor.startTick);
 			if(check > longestDuration) longestDuration = check; 
-			//System.out.println(check +" > "+ longestDuration );
 		}
 		totalTicks += check + 10;
-
-		//System.out.println("totalTicks= "+ totalTicks );
-
 		return totalTicks;
 	}
 	
@@ -80,24 +77,24 @@ public class SegmentObject
 	
 	
 	@SideOnly(Side.CLIENT)
-	public void DrawSegment(CutSceneGui cutSceneGui, Minecraft mc, FontRenderer fontObj)
+	public void DrawSegment(SceneObject sceneObject, Minecraft mc)
 	{
 			int width = mc.currentScreen.width;
-			if(cutSceneGui.scene.showDebug) fontObj.drawString("CurSegment: "+cutSceneGui.currentPhase + " Segment Frame:"+ this.segmentTick,width/2-30, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+			if(sceneObject.showDebug) sceneObject.guiParent.fontObj.drawString("CurSegment: "+sceneObject.guiParent.currentPhase + " Segment Frame:"+ this.segmentTick,width/2-30, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 
 			this.segmentTick++;
 			
 			for(ActorObject actor : this.actorArray)
 			{
-				if(this.segmentTick >= actor.startTick && this.segmentTick <= actor.getEndTick())
+				if(this.segmentTick >= actor.startTick && this.segmentTick < actor.getEndTick())
 				{
-					actor.DrawActor(cutSceneGui, this, mc, fontObj);
+					actor.DrawActor(sceneObject, this, mc);
 				}
 			}
 			
 			if(this.segmentTick >= this.getTickLength())
 			{
-				cutSceneGui.currentPhase++;
+				sceneObject.guiParent.currentPhase++;
 			}
 				
 	}

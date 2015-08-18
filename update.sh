@@ -35,7 +35,7 @@ grep -lRr -e $ver_key * | xargs sed -i "s/$ver_key/$newversion/g"
 . ./make_logs
 
 #upload Curse
-#. ./curse_upload
+. ./curse_upload
 
 #Move back to wiki to update
 cd ./wiki

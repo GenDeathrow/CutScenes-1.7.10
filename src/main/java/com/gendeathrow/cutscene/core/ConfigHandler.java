@@ -32,6 +32,8 @@ public class ConfigHandler
 		    {
 		    	configFolder.mkdir();
 		    	new File(configFolder, "assets").mkdir();
+		    	new File(configFolder, "assets/images").mkdir();
+		    	//new File(configFolder, "assets/sounds").mkdir();
 		    }
 		 
 		    File splashScreenConfig = new File(configFolder, "splashscreen.json");
@@ -47,19 +49,19 @@ public class ConfigHandler
 		        input = getClass().getResourceAsStream("/assets/customcutscene/splashscene_default.json");
 		        ByteStreams.copy(input, output);
 		        
-		        output = new FileOutputStream(new File(configFolder, "/assets/logo.png"));
+		        output = new FileOutputStream(new File(configFolder, "/assets/images/logo.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/logo.png");
 		        ByteStreams.copy(input, output);
 		        
-		        output = new FileOutputStream(new File(configFolder, "/assets/cat1.png"));
+		        output = new FileOutputStream(new File(configFolder, "/assets/images/cat1.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/cat1.png");
 		        ByteStreams.copy(input, output);
 		        
-		        output = new FileOutputStream(new File(configFolder, "/assets/cat2.png"));
+		        output = new FileOutputStream(new File(configFolder, "/assets/images/cat2.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/cat2.png");
 		        ByteStreams.copy(input, output);
 		        
-		        output = new FileOutputStream(new File(configFolder, "/assets/world.png"));
+		        output = new FileOutputStream(new File(configFolder, "/assets/images/world.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/world.png");
 		        ByteStreams.copy(input, output);
 		      }

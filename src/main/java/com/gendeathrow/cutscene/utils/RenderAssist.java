@@ -503,6 +503,12 @@ public class RenderAssist {
 		return resource;
 	}
 	
+	public static void ImageConstraints(int Width, int Height)
+	{
+		
+		
+	}
+	
 	public enum Alignment
 	{
 		TOP_LEFT("top_left"),

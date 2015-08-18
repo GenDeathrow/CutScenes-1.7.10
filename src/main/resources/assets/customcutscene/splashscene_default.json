@@ -11,14 +11,14 @@
 		  "alignment" : "CENTER_CENTER",
 		  "imageWidth": "256",
 		  "imageHeight": "45",
-          "tickLength": "120",
+          "duration": "120",
 		  "transitionIn" : ["fade",20],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "5"
 		},
         {
 		  "startTick": "0",
-          "tickLength": "120",
+          "duration": "120",
           "displayText": "Cutscene Demo Created by GenDeathrow",
 		  "alignment" : "BOTTOM_CENTER",
 		  "offsetY" : "-25",
@@ -35,7 +35,7 @@
 		  "type": "image",
 	      "resource": "world.png",
 		  "alignment" : "CENTER_CENTER",
-          "tickLength": "330",
+          "duration": "330",
 		  "transitionIn" : ["fade",20],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "1"
@@ -47,7 +47,7 @@
 		  "imageWidth": "200",
 		  "imageHeight": "200",
 		  "startTick": "120",
-          "tickLength": "220",
+          "duration": "210",
 		  "transitionIn" : ["fade",20],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "2"
@@ -59,7 +59,7 @@
 		  "imageWidth": "200",
 		  "imageHeight": "200",
 		  "startTick": "120",
-          "tickLength": "220",
+          "duration": "210",
 		  "transitionIn" : ["fade",20],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "2"
@@ -72,14 +72,14 @@
 		  "imageWidth": "500",
 		  "imageHeight": "333",
 		  "startTick": "200",
-          "tickLength": "120",
+          "duration": "130",
 		  "transitionIn" : ["fade",1],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "10"
 		},
         {
 		  "startTick": "0",
-          "tickLength": "220",
+          "duration": "220",
           "displayText": "In a World...",
 		  "textRGBColor": [255,255,0],
 		  "alignment" : "Top_CENTER",
@@ -90,7 +90,7 @@
         },
 		{
 		  "startTick": "120",
-          "tickLength": "120",
+          "duration": "120",
           "displayText": "Ruled by Laser Cats!",
 		  "textRGBColor": [255,255,0],
 		  "alignment" : "Top_CENTER",
@@ -98,7 +98,28 @@
 		  "transitionIn" : ["fade",20],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "20"
-        }
+        },
+        {
+		  "startTick": "330",
+          "duration": "200",
+          "displayText": "There can be only one...",
+		  "alignment" : "Center_CENTER",
+		  "textRGBColor": [255,255,0],
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "20"
+        },
+        {
+		  "startTick": "340",
+          "duration": "180",
+          "displayText": "Now make your Own!",
+		  "textRGBColor": [255,255,0],
+		  "alignment" : "Center_CENTER",
+		  "offsetY" : "25",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "20"
+		 }
       ]
     }
   ]

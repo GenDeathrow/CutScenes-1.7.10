@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
-import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
@@ -43,9 +42,11 @@ public class ActorObject implements Comparable
 	private String displayText;
 	private ActorType type;
 	
-	public SegmentObject segment;
+	public transient SegmentObject segment;
 	
+	@SerializedName("duration")
 	public int tickLength;
+	
 	public int actorTick;
 	public int startTick;
 	
@@ -57,6 +58,9 @@ public class ActorObject implements Comparable
 	
 	private int imageWidth;
 	private int imageHeight;
+	
+	private transient int width;
+	private transient int height;
 	
 	public TransitionType transitionIn;
 	public TransitionType transitionOut;
@@ -82,12 +86,15 @@ public class ActorObject implements Comparable
 		this.transitionIn = TransitionType.Fade;
 		this.transitionOut = TransitionType.Fade;
 		this.zLevel = 1;
+		this.width = 0;
+		this.height = 0;
 	}
 	
 	
-	public void init()
+	public void init(SegmentObject segmentObj)
 	{
-
+		
+		this.segment = segmentObj;
 		
 		if(type == ActorType.IMAGE && this.resourcePath != null)
 		{
@@ -97,8 +104,31 @@ public class ActorObject implements Comparable
 
 				BufferedImage getImage = ImageIO.read(new File(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets"+ File.separator +this.resourcePath));
 				
-				if(this.imageHeight == 0) this.imageHeight = getImage.getHeight();
-				if(this.imageWidth == 0) this.imageWidth = getImage.getWidth();
+				if(this.imageHeight == 0) 
+				{
+					int constraints = 1;
+					if(this.imageWidth != 0)
+					{
+						constraints = (getImage.getWidth() / this.imageWidth);
+					}
+					
+					this.imageHeight = getImage.getHeight() * constraints;
+					
+				}
+				if(this.imageWidth == 0) 
+				{
+					int constraints = 1;
+					if(this.imageHeight != 0)
+					{
+						constraints = (getImage.getHeight() / this.imageHeight);
+					}
+					
+					this.imageWidth = getImage.getWidth() * constraints;
+					
+				}
+				
+				this.width = this.imageWidth;
+				this.height = this.imageHeight;
 				
 			} catch (IOException e) 
 			{
@@ -127,11 +157,11 @@ public class ActorObject implements Comparable
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public void DrawActor(CutSceneGui cutSceneGui, SegmentObject segment, Minecraft mc, FontRenderer fontObj)
+	public void DrawActor(SceneObject sceneObject, SegmentObject segment, Minecraft mc)
 	{
 		//System.out.println("type:"+ this.type.type);
-		
-		this.actorTick++;
+
+		FontRenderer fontObj = sceneObject.guiParent.fontObj;
 		
 		if(type == ActorType.IMAGE)
 		{
@@ -145,17 +175,31 @@ public class ActorObject implements Comparable
 		{
 			//this.playSound();
 		}
-		//fontObj.drawString("Actor Frame:"+ this.actorTick ,0, 30, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
-
+		
+		if(sceneObject.showDebug && alignment != null) 
+		{
+			int posx = this.alignment.x + this.offsetX;
+			int posy = this.alignment.y + this.offsetY;
+			
+			fontObj.drawString("Actor Frame:"+ this.actorTick ,posx ,posy - fontObj.FONT_HEIGHT, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+			RenderAssist.drawUnfilledRect( posx ,posy, this.width +posx, this.height +posy, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+		}
+		this.actorTick++;
 	}
 	
-	
+	private void DrawDebug()
+	{
+		
+	}
 	private void DrawText(Minecraft mc, FontRenderer fontObj)
 	{
 		List wrap = fontObj.listFormattedStringToWidth(displayText, mc.currentScreen.width - 30);
 		ListIterator itWrap = wrap.listIterator();
 
 		this.transition.update(this);
+		
+		//System.out.println(this.transition.alpha + "<<<<<<<<<<<<<<<<<<<<<<<"+this.displayText.substring(0, 5));
+		
 		
 		GL11.glEnable(GL11.GL_BLEND);
 
@@ -169,10 +213,14 @@ public class ActorObject implements Comparable
 			int textWidth = fontObj.getStringWidth(line);
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
 
-			fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
+			if(this.transition.alpha != 0)fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
 			
+			this.width = textWidth > this.width ? textWidth : this.width;
+			 		
+			this.height = index+1 * fontObj.FONT_HEIGHT + 2;
 			index++;
 		}
+
 		GL11.glDisable(GL11.GL_BLEND);
 
 	}
@@ -235,5 +283,7 @@ public class ActorObject implements Comparable
 		int actorCompare = ((ActorObject)arg0).zLevel;
 		return this.zLevel-actorCompare;
 	}
+
+
 	
 }

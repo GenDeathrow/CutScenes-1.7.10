@@ -1,24 +1,19 @@
 package com.gendeathrow.cutscene.client.gui;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-
-
-
 
 import com.gendeathrow.cutscene.MovieRender.MovieReader;
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
 import com.gendeathrow.cutscene.SceneRender.SegmentObject;
 import com.gendeathrow.cutscene.utils.GsonReader;
 import com.gendeathrow.cutscene.utils.RenderAssist;
+import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -33,32 +28,41 @@ public class CutSceneGui extends GuiScreen
 	public ArrayList<SegmentObject> segmentList;
 	public MovieReader Movie;
 	public BufferedImage[] frames;
+	public FontRenderer fontObj;
 	
 	public CutSceneGui() {}
 	
 	public CutSceneGui(String scenePath)
 	{
+
 		this.scenePath = scenePath;
 		this.renderTicks = 0;
 		this.currentPhase =0;
 		this.scene = GsonReader.GsonReadFromFile(scenePath);
 		this.closeOnTick = this.scene.getCloseOnTicks();
-		this.segmentList = this.scene.screenSegments;
-		this.scene.init();
+		
+		this.scene.init(this);
 	}
 	
     /**
      * Adds the buttons (and other controls) to the screen in question.
      */
 	
-	GuiButton button;
+	GuiButton reloadButton;
+	GuiButton stopButton;
 	
 	@Override
     public void initGui() 
     {
-		this.button = new GuiButton(0, this.width/2, this.height/2, 80, 20,  "Reload");
-		this.button.visible = false;
-		this.buttonList.add(this.button);
+		this.fontObj = this.fontRendererObj;
+		
+		this.reloadButton = new GuiButton(0, this.width - 50, this.height - 30, 15, 20,  "R");
+		this.reloadButton.visible = false;
+		
+		this.stopButton = new GuiButton(1, this.width - 35, this.height - 30, 15, 20,  "S");
+		
+		this.buttonList.add(this.reloadButton);
+
     }
 
     
@@ -75,23 +79,19 @@ public class CutSceneGui extends GuiScreen
 		{
 	       case 0:
            	mc.displayGuiScreen(new CutSceneGui(this.scenePath));
-           	return;
+           	break;
 	    }
 	 }
 	
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
 	{
-		if(this.renderTicks >= this.closeOnTick && !this.scene.finalize)    this.button.visible = true;
+		if(!this.scene.finalize)    this.reloadButton.visible = true;
 		if(this.renderTicks >= this.closeOnTick && this.scene.finalize) 	mc.displayGuiScreen(null);
 		
 		this.drawBackground();
 
-		if(this.segmentList != null && this.currentPhase <= this.segmentList.size()-1)
-		{
-			((SegmentObject)this.segmentList.get(this.currentPhase)).DrawSegment(this, Minecraft.getMinecraft(), this.fontRendererObj);
-		}
-		
+		this.scene.DrawCutScene();
 		
 		if(this.scene.showDebug) this.fontRendererObj.drawString("Render Ticks: "+this.renderTicks,0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 		

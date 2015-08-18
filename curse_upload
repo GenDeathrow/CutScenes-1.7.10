@@ -5,13 +5,13 @@ FILE_LOCATION=`echo "./build/libs/$FILE_NAME"`
 CHANGE_LOG=`git log -1 --pretty=format:"%B"`
 
 # Curse project ID. Can normally found in the project URL
-CURSE_ID=`echo "231266"`
+#CURSE_ID=`echo "$CURSE_PROJECT_ID"`
 
 #See https://github.com/curseforge/api for how to retrieve game version numbers
 JSON=`printf '{"changelog": "%s", "gameVersions": [4455], "releaseType": "alpha"}' "$CHANGE_LOG"`
 
 echo "Uploading $FILE_NAME to Curse Forge..."
 echo
-RESPONSE=`curl -H "X-Api-Token: $CURSE_API_KEY" -X POST  -F metadata="$JSON"  -F file="@$FILE_LOCATION" "https://minecraft.curseforge.com/api/projects/$CURSE_ID/upload-file"`
+RESPONSE=`curl -H "X-Api-Token: $CURSE_API_KEY" -X POST  -F metadata="$JSON"  -F file="@$FILE_LOCATION" "https://minecraft.curseforge.com/api/projects/$CURSE_PROJECT_ID/upload-file"`
 echo
 echo $RESPONSE
