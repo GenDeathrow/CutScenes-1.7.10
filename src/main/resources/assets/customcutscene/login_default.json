@@ -1,0 +1,44 @@
+{
+  "finalize" : false,
+  "showDebug" : false,
+  "backgroundColor" : [0,0,0],
+  "screenSegments": [
+    {
+		// 1st Segment
+      "actorArray": [
+        {
+		  "type": "image",
+	      "resource": "logo.png",
+		  "alignment" : "CENTER_CENTER",
+		  "imageWidth": "256",
+		  "imageHeight": "45",
+          "duration": "220",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "5"
+		},
+        {
+		  "startTick": "0",
+          "duration": "220",
+          "displayText": "Cutscene Demo Created by GenDeathrow",
+		  "alignment" : "BOTTOM_CENTER",
+		  "offsetY" : "-25",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "2"
+        },
+		{
+		  "startTick": "0",
+          "duration": "220",
+          "displayText": "Player Login Demo",
+		  "alignment" : "Top_CENTER",
+		  "offsetY" : "25",
+		  "transitionIn" : ["fade",20],
+		  "transitionOut" : ["fade",20],
+		  "zLevel" : "2"
+        }
+      ]
+    }
+      ]
+ }
+ 

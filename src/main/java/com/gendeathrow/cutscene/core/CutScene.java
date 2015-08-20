@@ -1,15 +1,9 @@
 package com.gendeathrow.cutscene.core;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-import com.gendeathrow.cutscene.SceneRender.SceneObject;
-import com.gendeathrow.cutscene.SceneRender.SegmentObject;
 import com.gendeathrow.cutscene.core.proxies.CommonProxy;
-import com.gendeathrow.cutscene.utils.GsonReader;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;

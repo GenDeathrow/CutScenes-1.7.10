@@ -1,6 +1,7 @@
 {
-  "finalize" : true,
+  "finalize" : false,
   "showDebug" : false,
+  "backgroundColor" : [0,0,0],
   "screenSegments": [
     {
 		// 1st Segment

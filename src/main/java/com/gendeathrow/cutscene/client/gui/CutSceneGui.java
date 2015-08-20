@@ -101,7 +101,7 @@ public class CutSceneGui extends GuiScreen
 	
 	public void drawBackground()
 	{
-		RenderAssist.drawRect(0, 0, this.width, this.height, RenderAssist.getColorFromRGBA(0, 0, 0, 180));
+		RenderAssist.drawRect(0, 0, this.width, this.height, this.scene.getBackgroundColor());
 		
 	}
 	

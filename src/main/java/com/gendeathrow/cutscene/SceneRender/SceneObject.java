@@ -18,7 +18,7 @@ public class SceneObject
 	public boolean finalize;
 	public boolean showDebug;
 	
-	private int defaultBackgroundColor;
+	private int[] backgroundColor;
 	
 
 	private String backgroundTexturePath;
@@ -34,6 +34,7 @@ public class SceneObject
 	{
 		this.finalize = false;
 		this.showDebug = false;
+		this.backgroundColor = new int[]{0,0,0}; // Black
 	}
 	
 	
@@ -61,19 +62,11 @@ public class SceneObject
 		return totalTicks;
 	}
 	
-	/** 
-	 * Returns Default Background color in Argb int
-	 * @return
-	 */
-	public int getDefaltBackgroundColor()
+	public int getBackgroundColor()
 	{
-		return this.defaultBackgroundColor;
-	}
-	
-	public SceneObject setBackgroundColor(int red, int blue, int green, int alpha)
-	{
-		this.defaultBackgroundColor = RenderAssist.getColorFromRGBA(red, green, blue, alpha);
-		return this;
+		if(this.backgroundColor.length != 3) this.backgroundColor = new int[]{0,0,0};
+		
+		return RenderAssist.getColorFromRGBA(this.backgroundColor[0], this.backgroundColor[1], this.backgroundColor[2], 255);
 	}
 	
 	/**
@@ -104,13 +97,10 @@ public class SceneObject
 	@SideOnly(Side.CLIENT)
 	public void DrawCutScene()
 	{
-		
 		if(this.screenSegments != null && this.guiParent.currentPhase <= this.screenSegments.size()-1)
 		{
 			((SegmentObject)this.screenSegments.get(this.guiParent.currentPhase)).DrawSegment(this, Minecraft.getMinecraft());
 		}
-		
-		
 	}
 	
 }

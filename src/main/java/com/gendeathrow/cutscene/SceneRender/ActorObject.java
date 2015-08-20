@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL11;
 import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
+import com.gendeathrow.cutscene.utils.Utils;
 import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -100,9 +101,15 @@ public class ActorObject implements Comparable
 		{
 			try 
 			{
-				this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath);
-
-				BufferedImage getImage = ImageIO.read(new File(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath));
+				//this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath);
+				String path = this.resourcePath;
+				 if(this.resourcePath.endsWith(".png"))
+		         {
+		        	 path = this.resourcePath.substring(0, this.resourcePath.length() - 4);
+		         }
+						
+				this.resourceLocation = new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
+				BufferedImage getImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.resourceLocation).getInputStream());
 				
 				if(this.imageHeight == 0) 
 				{
@@ -113,7 +120,6 @@ public class ActorObject implements Comparable
 					}
 					
 					this.imageHeight = getImage.getHeight() * constraints;
-					
 				}
 				if(this.imageWidth == 0) 
 				{
@@ -124,11 +130,12 @@ public class ActorObject implements Comparable
 					}
 					
 					this.imageWidth = getImage.getWidth() * constraints;
-					
 				}
 				
 				this.width = this.imageWidth;
 				this.height = this.imageHeight;
+				
+				getImage = null;
 				
 			} catch (IOException e) 
 			{

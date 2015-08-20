@@ -14,8 +14,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class SegmentObject
 {
-
-	public int tickLength;
+	
+	public transient int tickLength;
 	public ArrayList<ActorObject> actorArray;
 	public int segmentTick;
 	
