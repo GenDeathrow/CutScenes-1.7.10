@@ -5,7 +5,6 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.gendeathrow.cutscene.client.ClientTickHandler;
 import com.gendeathrow.cutscene.client.Gui_EventHandler;
-import com.gendeathrow.cutscene.utils.SoundAssist;
 import com.gendeathrow.cutscene.utils.Utils;
 
 import cpw.mods.fml.common.FMLCommonHandler;
