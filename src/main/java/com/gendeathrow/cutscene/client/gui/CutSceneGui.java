@@ -3,6 +3,7 @@ package com.gendeathrow.cutscene.client.gui;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -92,6 +93,7 @@ public class CutSceneGui extends GuiScreen
 		this.drawBackground();
 
 		this.scene.DrawCutScene();
+		
 		
 		if(this.scene.showDebug) this.fontRendererObj.drawString("Render Ticks: "+this.renderTicks,0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 		

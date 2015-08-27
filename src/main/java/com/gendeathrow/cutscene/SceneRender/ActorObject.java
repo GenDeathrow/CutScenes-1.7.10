@@ -10,6 +10,7 @@ import java.util.ListIterator;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ResourceLocation;
@@ -73,6 +74,7 @@ public class ActorObject implements Comparable
 	public transient ResourceLocation resourceLocation;
 	
 	transient SoundHandler soundHandler;
+	transient boolean hasPlaySound;
 	
 	private Alignment alignment;
 	
@@ -89,6 +91,8 @@ public class ActorObject implements Comparable
 		this.zLevel = 1;
 		this.width = 0;
 		this.height = 0;
+		this.tickLength = 5;
+		this.hasPlaySound = false;
 	}
 	
 	
@@ -145,9 +149,13 @@ public class ActorObject implements Comparable
 		}
 		else if(type == ActorType.SOUND && this.resourcePath != null)
 		{
-			//soundHandler = Minecraft.getMinecraft().getSoundHandler();
-			//SoundEventAccessorComposite sound = soundHandler.getSound(this.resourceLocation);
-			//sound.addSoundToEventPool(sound);
+			String path = this.resourcePath;
+			
+			 if(this.resourcePath.endsWith(".ogg"))
+	         {
+	        	 path = this.resourcePath.substring(0, this.resourcePath.length() - 4);
+	         }
+			this.resourceLocation = new ResourceLocation("ccsfiles", Utils.encodeName(path));
 		}
 		
 		
@@ -169,7 +177,6 @@ public class ActorObject implements Comparable
 		//System.out.println("type:"+ this.type.type);
 
 		FontRenderer fontObj = sceneObject.guiParent.fontObj;
-		
 		if(type == ActorType.IMAGE)
 		{
 			this.DrawImage(mc);
@@ -178,9 +185,10 @@ public class ActorObject implements Comparable
 		{
 			this.DrawText(mc, fontObj);
 		}
-		else if (type == ActorType.SOUND)
+		else if (type == ActorType.SOUND && !this.hasPlaySound)
 		{
-			//this.playSound();
+			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(this.resourceLocation, 1.0F));
+			this.hasPlaySound = true;
 		}
 		
 		if(sceneObject.showDebug && alignment != null) 

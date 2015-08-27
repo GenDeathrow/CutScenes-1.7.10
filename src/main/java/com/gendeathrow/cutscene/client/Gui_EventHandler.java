@@ -1,12 +1,14 @@
 package com.gendeathrow.cutscene.client;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.event.world.WorldEvent.Load;
+
+import org.apache.logging.log4j.Level;
 
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.core.CutScene;
@@ -42,20 +44,49 @@ public class Gui_EventHandler {
 	@SubscribeEvent
 	public void onPlayerLoggedin(RenderGameOverlayEvent event)
 	{
-	
+		
+		//SaveData playerData = SaveData.get(Minecraft.getMinecraft().thePlayer);
+		
+		// if First Log in has happened and always play is  false than end function here
+		//if(playerData.firstLogin == true && Settings.trigger_OnPlayer_Login_Always == false) return;
+		
 		if(firstload && Settings.trigger_OnPlayer_Login && Settings.file_OnPlayer_Login != "")
 		{
         	try
         	{
+            	firstload = false;
+        		event.setCanceled(true);
         		this.mc.displayGuiScreen(new CutSceneGui("/customcutscenes/"+Settings.file_OnPlayer_Login));
+        		
+
         	}catch(NullPointerException e)
         	{
         	    CutScene.logger.log(Level.ERROR, "Error Reading \"/customcutscenes/" + Settings.file_OnPlayer_Login +"\"");
         	}
-        	firstload = false;
+
+
 		}
 	}
 	
-
-
-}
+	@SubscribeEvent
+	public void onPlayerLogout(GuiOpenEvent event)
+	{
+		if(event.gui == null) return;
+		
+		if(event.gui instanceof GuiMainMenu)
+		{
+			firstload = true;
+		}
+	
+	}
+	
+	@SubscribeEvent
+	public void onSoundPlay(PlaySoundEvent17 event)
+	{
+		if(event.category == SoundCategory.MUSIC && Minecraft.getMinecraft().currentScreen instanceof CutSceneGui)
+		{
+			event.result = null;
+		}
+			
+	}
+}	

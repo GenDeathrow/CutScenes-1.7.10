@@ -73,7 +73,9 @@ public class ClientProxy extends CommonProxy{
 
 		super.registerEventHandlers();
 
+		
 		MinecraftForge.EVENT_BUS.register(new Gui_EventHandler());
+		//MinecraftForge.EVENT_BUS.register(new SaveData());
 		
 //	
 //		UpdateNotification updateManager = new UpdateNotification();

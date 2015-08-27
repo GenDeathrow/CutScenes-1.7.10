@@ -18,6 +18,11 @@
 		  "zLevel" : "5"
 		},
         {
+		  "type": "sound",
+		  "startTick": "0",
+	      "resource": "explode2.ogg"
+		},
+        {
 		  "startTick": "0",
           "duration": "120",
           "displayText": "Cutscene Demo Created by GenDeathrow",
@@ -77,6 +82,16 @@
 		  "transitionIn" : ["fade",1],
 		  "transitionOut" : ["fade",20],
 		  "zLevel" : "10"
+		},
+		{
+		  "type": "sound",
+		  "startTick": "200",
+	      "resource": "explode2.ogg"
+		},
+		{
+		  "type": "sound",
+		  "startTick": "210",
+	      "resource": "explode2.ogg"
 		},
         {
 		  "startTick": "0",

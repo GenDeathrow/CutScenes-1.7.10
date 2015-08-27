@@ -103,6 +103,10 @@ public class ConfigHandler
 		        output = new FileOutputStream(new File(devFolder, "world.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/world.png");
 		        ByteStreams.copy(input, output);
+		        
+		        output = new FileOutputStream(new File(devFolder, "explode2.ogg"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/explode2.ogg");
+		        ByteStreams.copy(input, output);
 		      }
 		      catch (FileNotFoundException e1)
 		      {
@@ -133,7 +137,7 @@ public class ConfigHandler
 
 		Settings.trigger_OnPlayer_Login = config.get("Triggers", "On_Player_Login", Settings.trigger_OnPlayer_Login, "If true. This will Trigger when a player Logs in. (!Beware!: As of now this happens everytime)").getBoolean();
 		Settings.file_OnPlayer_Login = config.get("Triggers", "On_Player_Login_File", Settings.file_OnPlayer_Login , "Type name of Json you want to load Example: \"filename.json\"").getString();
-		
+		//Settings.trigger_OnPlayer_Login_Always = config.get("Triggers", "On_Player_Login_Always_Play", Settings.trigger_OnPlayer_Login_Always, "If true. This will play everytime the player logs into a world. Still Will only trigger once per game. You have to ").getBoolean();		
 		// Register Triggers to json files
 		
 		// SplashScreen

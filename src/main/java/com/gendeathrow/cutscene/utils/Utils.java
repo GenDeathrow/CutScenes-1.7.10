@@ -121,7 +121,7 @@ public class Utils
             writer.newLine();
           }
           
-	        writer.write("\"" + encodeName((String)soundAssets.get(i)) + "\": {\"category\": \"record\",\"sounds\": [{\"name\": \"" + encodeName((String)soundAssets.get(i)) + "\",\"stream\": true}]}");
+	        writer.write("\"" + encodeName((String)soundAssets.get(i)) + "\": {\"category\": \"master\",\"sounds\": [{\"name\": \"" + encodeName((String)soundAssets.get(i)) + "\",\"stream\": false}]}");
 	        
 	        out.putNextEntry(new JarEntry("assets/ccsfiles/sounds/" + encodeName((String)soundAssets.get(i)) + ".ogg"));
 	          FileInputStream f1 = new FileInputStream(new File(f, (String)soundAssets.get(i) + ".ogg"));

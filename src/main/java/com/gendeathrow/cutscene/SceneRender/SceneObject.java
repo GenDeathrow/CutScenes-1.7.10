@@ -42,6 +42,8 @@ public class SceneObject
 	{
 		this.guiParent = gui;
 		
+		Minecraft.getMinecraft().getSoundHandler().stopSounds();
+		
 		for(SegmentObject segment : this.screenSegments)
 		{
 			segment.init(this);
