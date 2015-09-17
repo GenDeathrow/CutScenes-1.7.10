@@ -39,7 +39,8 @@ public class ClientTickHandler{
             Minecraft mc = Minecraft.getMinecraft();
             if (firstload && mc != null) 
             {
-            	try{
+            	try
+            	{
             		mc.displayGuiScreen(new CutSceneGui("/customcutscenes/splashscreen.json"));
             	}catch(NullPointerException e)
             	{

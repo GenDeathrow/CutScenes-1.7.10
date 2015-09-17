@@ -2,6 +2,7 @@ package com.gendeathrow.cutscene.client.gui;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Date;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,7 +14,8 @@ import com.gendeathrow.cutscene.SceneRender.SceneObject;
 import com.gendeathrow.cutscene.SceneRender.SegmentObject;
 import com.gendeathrow.cutscene.utils.GsonReader;
 import com.gendeathrow.cutscene.utils.RenderAssist;
-import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
+import com.gendeathrow.cutscene.utils.Utils;
+import com.ibm.icu.text.DateFormat;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -23,24 +25,24 @@ public class CutSceneGui extends GuiScreen
 {
 	private String scenePath;
 	public int renderTicks;
-	public int closeOnTick;
 	public SceneObject scene;
 	public int currentPhase;
-	public ArrayList<SegmentObject> segmentList;
-	public MovieReader Movie;
-	public BufferedImage[] frames;
 	public FontRenderer fontObj;
+	public long startTime;
+	
+	
 	
 	public CutSceneGui() {}
 	
 	public CutSceneGui(String scenePath)
 	{
 
+		this.startTime = Minecraft.getSystemTime();
+		
 		this.scenePath = scenePath;
 		this.renderTicks = 0;
 		this.currentPhase =0;
 		this.scene = GsonReader.GsonReadFromFile(scenePath);
-		this.closeOnTick = this.scene.getCloseOnTicks();
 		
 		this.scene.init(this);
 	}
@@ -84,18 +86,25 @@ public class CutSceneGui extends GuiScreen
 	    }
 	 }
 	
+	boolean firstload = true;
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
 	{
+		if (firstload) { firstload = false;  this.startTime = Minecraft.getSystemTime();}
+		
+		
 		if(!this.scene.finalize)    this.reloadButton.visible = true;
-		if(this.renderTicks >= this.closeOnTick && this.scene.finalize) 	mc.displayGuiScreen(null);
+		if(this.scene.closeScene && this.scene.finalize) 	
+		{
+			mc.displayGuiScreen(null);
+			return;
+		}
 		
 		this.drawBackground();
 
 		this.scene.DrawCutScene();
 		
-		
-		if(this.scene.showDebug) this.fontRendererObj.drawString("Render Ticks: "+this.renderTicks,0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+		if(this.scene.showDebug) this.fontRendererObj.drawString("Render Duration: "+Utils.getTimeFormater(Minecraft.getSystemTime() - this.startTime),0, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
 		
 		super.drawScreen(par1, par2, par3);
 		this.renderTicks++;
@@ -104,7 +113,6 @@ public class CutSceneGui extends GuiScreen
 	public void drawBackground()
 	{
 		RenderAssist.drawRect(0, 0, this.width, this.height, this.scene.getBackgroundColor());
-		
 	}
 	
 }

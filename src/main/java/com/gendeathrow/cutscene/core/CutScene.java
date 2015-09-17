@@ -1,9 +1,15 @@
 package com.gendeathrow.cutscene.core;
 
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
+import com.gendeathrow.cutscene.core.command.CommandScene;
 import com.gendeathrow.cutscene.core.proxies.CommonProxy;
+import com.gendeathrow.cutscene.network.packet.PacketScene;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -13,7 +19,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = CutScene.MODID, version = CutScene.VERSION, name = CutScene.Name)
 public class CutScene
@@ -59,9 +67,9 @@ public class CutScene
 			
 			proxy.preInit(event);
 
-			//this.network = NetworkRegistry.INSTANCE.newSimpleChannel(Channel);
-			//this.network.registerMessage(PacketSkillz.HandlerServer.class, PacketSkillz.class, 0, Side.SERVER);
-			//this.network.registerMessage(PacketSkillz.HandlerClient.class, PacketSkillz.class, 1, Side.CLIENT);
+			this.network = NetworkRegistry.INSTANCE.newSimpleChannel(Channel);
+			this.network.registerMessage(PacketScene.HandlerServer.class, PacketScene.class, 0, Side.SERVER);
+			this.network.registerMessage(PacketScene.HandlerClient.class, PacketScene.class, 1, Side.CLIENT);
 			
 //			PacketDispatcher.registerPackets();
 			
@@ -81,11 +89,11 @@ public class CutScene
 		@EventHandler
 		public void serverStart(FMLServerStartingEvent event)
 		{
-			//MinecraftServer server = MinecraftServer.getServer();
-			//ICommandManager command = server.getCommandManager();
-			//ServerCommandManager manager = (ServerCommandManager) command;
+			MinecraftServer server = MinecraftServer.getServer();
+			ICommandManager command = server.getCommandManager();
+			ServerCommandManager manager = (ServerCommandManager) command;
 			
-//			manager.registerCommand(new CommandPhysics());
+			manager.registerCommand(new CommandScene());
 
 		}
 }

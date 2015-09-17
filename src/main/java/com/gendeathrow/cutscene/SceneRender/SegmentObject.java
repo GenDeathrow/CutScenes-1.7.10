@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.utils.RenderAssist;
+import com.gendeathrow.cutscene.utils.Utils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -20,6 +21,7 @@ public class SegmentObject
 	public int segmentTick;
 	
 	public transient SceneObject scene;
+	public transient long segmentLength;
 	
 	public SegmentObject()
 	{
@@ -29,6 +31,8 @@ public class SegmentObject
 	public void init(SceneObject sceneObj)
 	{
 		this.scene = sceneObj;
+		
+		this.segmentLength = this.getLength();
 
 		for(ActorObject actor : this.actorArray)
 		{
@@ -41,24 +45,23 @@ public class SegmentObject
 			
 	}
 	
-	public int getTickLength()
+	public long getLength()
 	{
-		int totalTicks = 0;
-		int check = 0;
-		int longestDuration = 0;
+		long totalTicks = 0;
+		long check = 0;
+		long max = 0;
 		for(ActorObject actor : this.actorArray)
 		{
-			check = (actor.tickLength + actor.startTick);
-			if(check > longestDuration) longestDuration = check; 
+			check = actor.getStopTime();
+			if(check > max) 
+			{
+				max = check; 
+			}
 		}
-		totalTicks += check + 10;
+		
+		totalTicks += max;
 		return totalTicks;
-	}
-	
-	public void setTickLength(int length)
-	{
-		this.tickLength = length;
-	}
+	}	
 	
 	public ArrayList getActorArray()
 	{
@@ -75,24 +78,41 @@ public class SegmentObject
 		this.actorArray.remove(index);
 	}
 	
+	boolean firstload = true;
+	long startTime;
+	
+	private long getSegmentDuration()
+	{
+		return (Minecraft.getSystemTime() - this.startTime);
+	}
 	
 	@SideOnly(Side.CLIENT)
 	public void DrawSegment(SceneObject sceneObject, Minecraft mc)
 	{
+		if (firstload) { firstload = false;  this.startTime = Minecraft.getSystemTime();}
+		
 			int width = mc.currentScreen.width;
-			if(sceneObject.showDebug) sceneObject.guiParent.fontObj.drawString("CurSegment: "+sceneObject.guiParent.currentPhase + " Segment Frame:"+ this.segmentTick,width/2-30, 0, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+			
+			if(sceneObject.showDebug) 
+				{
+					sceneObject.guiParent.fontObj.drawString("CurSegment: "+sceneObject.guiParent.currentPhase + " Segment Time:"+ Utils.getTimeFormater(this.getSegmentDuration()) + " Close on: "+ Utils.getTimeFormater(this.segmentLength),0, mc.fontRenderer.FONT_HEIGHT * 2, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+					sceneObject.guiParent.fontObj.drawString("Segment Time:"+ Utils.getTimeFormater(this.getSegmentDuration()),0, mc.fontRenderer.FONT_HEIGHT * 3 + 3, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+					sceneObject.guiParent.fontObj.drawString("Close on: "+ Utils.getTimeFormater(this.segmentLength),0, mc.fontRenderer.FONT_HEIGHT * 4 + 6, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+				}
 
 			this.segmentTick++;
 			
 			for(ActorObject actor : this.actorArray)
 			{
-				if(this.segmentTick >= actor.startTick && this.segmentTick < actor.getEndTick())
+				if(this.getSegmentDuration() >= actor.getStartTime() && this.getSegmentDuration() < actor.getStopTime())
 				{
 					actor.DrawActor(sceneObject, this, mc);
-				}
+				}				
+				
+				
 			}
-			
-			if(this.segmentTick >= this.getTickLength())
+
+			if(this.getSegmentDuration() >= this.segmentLength)
 			{
 				sceneObject.guiParent.currentPhase++;
 			}

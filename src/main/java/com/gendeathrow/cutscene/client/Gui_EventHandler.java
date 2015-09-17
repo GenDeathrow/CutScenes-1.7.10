@@ -41,29 +41,34 @@ public class Gui_EventHandler {
 	
 	boolean firstload = true;
 	
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerLoggedin(RenderGameOverlayEvent event)
 	{
-		
-		//SaveData playerData = SaveData.get(Minecraft.getMinecraft().thePlayer);
-		
-		// if First Log in has happened and always play is  false than end function here
-		//if(playerData.firstLogin == true && Settings.trigger_OnPlayer_Login_Always == false) return;
-		
-		if(firstload && Settings.trigger_OnPlayer_Login && Settings.file_OnPlayer_Login != "")
+
+		if(firstload)
 		{
-        	try
-        	{
-            	firstload = false;
-        		event.setCanceled(true);
-        		this.mc.displayGuiScreen(new CutSceneGui("/customcutscenes/"+Settings.file_OnPlayer_Login));
-        		
+			firstload = false;
+			
+			CutsceneSaveData.loadConfig("cutscene_data");
+			
+			if(Settings.trigger_OnPlayer_Login && Settings.file_OnPlayer_Login != "")
+			{
+				if(Settings.hasPlayedSeenLogin && !Settings.trigger_OnPlayer_Login_Always) return;
+				
+				try
+				{
+					event.setCanceled(true);
+					
+					Settings.hasPlayedSeenLogin = true;
+					CutsceneSaveData.saveConfig("cutscene_data");
+					this.mc.displayGuiScreen(new CutSceneGui("/customcutscenes/"+Settings.file_OnPlayer_Login));
 
-        	}catch(NullPointerException e)
-        	{
-        	    CutScene.logger.log(Level.ERROR, "Error Reading \"/customcutscenes/" + Settings.file_OnPlayer_Login +"\"");
-        	}
-
+				}catch(NullPointerException e)
+				{
+					CutScene.logger.log(Level.ERROR, "Error Reading \"/customcutscenes/" + Settings.file_OnPlayer_Login +"\"");
+				}
+			}
 
 		}
 	}

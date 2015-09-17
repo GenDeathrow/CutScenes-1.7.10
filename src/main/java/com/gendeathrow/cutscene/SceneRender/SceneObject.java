@@ -1,9 +1,9 @@
 package com.gendeathrow.cutscene.SceneRender;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.utils.RenderAssist;
@@ -17,6 +17,7 @@ public class SceneObject
 
 	public boolean finalize;
 	public boolean showDebug;
+	public String id;
 	
 	private int[] backgroundColor;
 	
@@ -29,9 +30,13 @@ public class SceneObject
 	private int curSegment;
 	public transient CutSceneGui guiParent;
 	
+	public transient static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("m:s:A");
+	public transient boolean closeScene = false;
+	
 	
 	public SceneObject()
 	{
+		this.id = null;
 		this.finalize = false;
 		this.showDebug = false;
 		this.backgroundColor = new int[]{0,0,0}; // Black
@@ -50,18 +55,9 @@ public class SceneObject
 		}
 	}
 	
-	/**
-	 * Total Length of Ticks the Cutsceen will show.
-	 * @return
-	 */
-	public int getCloseOnTicks()
+	public boolean shouldClose()
 	{
-		int totalTicks = 0;
-		for(SegmentObject segment : this.screenSegments)
-		{
-			totalTicks += segment.getTickLength() + 10;
-		}
-		return totalTicks;
+		return closeScene;
 	}
 	
 	public int getBackgroundColor()
@@ -99,10 +95,11 @@ public class SceneObject
 	@SideOnly(Side.CLIENT)
 	public void DrawCutScene()
 	{
-		if(this.screenSegments != null && this.guiParent.currentPhase <= this.screenSegments.size()-1)
+		if(this.screenSegments != null && this.guiParent.currentPhase <= this.screenSegments.size()-1 && !this.closeScene)
 		{
-			((SegmentObject)this.screenSegments.get(this.guiParent.currentPhase)).DrawSegment(this, Minecraft.getMinecraft());
+			((SegmentObject)getSegment(this.guiParent.currentPhase)).DrawSegment(this, Minecraft.getMinecraft());
 		}
+		else this.closeScene=true;
 	}
 	
 }

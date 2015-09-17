@@ -37,7 +37,9 @@ public class GsonReader
 
 		    gsonBuilder.registerTypeAdapter(RenderAssist.Alignment.class, RenderAssist.new AlignmentDeserializer());
 			gsonBuilder.registerTypeAdapter(ActorObject.ActorType.class, ActorObject.new ActorTypeDeserializer());
+			gsonBuilder.registerTypeAdapter(long.class, ActorObject.new ActorDurationDeserializer());
 			gsonBuilder.registerTypeAdapter(Transition.TransitionType.class, Transition.new TransitionTypeDeserializer());
+
 
 		    Gson gson = gsonBuilder.create();
 

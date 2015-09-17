@@ -2,6 +2,9 @@ package com.gendeathrow.cutscene.SceneRender;
 
 import java.lang.reflect.Type;
 
+import org.apache.logging.log4j.Level;
+
+import com.gendeathrow.cutscene.core.CutScene;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -20,19 +23,26 @@ public class Transition
 	
 	private boolean init;
 	
+	private double fadeSteps = 0;
+	
 	
 	public Transition()
 	{
 		this.alpha = 255;
+		this.fadeSteps = 0;
 		this.init = false;
 	}
 	
 	public void update(ActorObject actor)
 	{
 
-		if(actor.actorTick <= actor.transitionIn.duration && TransitionType.isType(actor.transitionIn)) Fade(actor, true);
-		else if(actor.actorTick >= (actor.tickLength - actor.transitionOut.duration) && TransitionType.isType(actor.transitionOut)) Fade(actor, false);
+		//System.out.println(actor.getActorDuration() +"<="+ actor.transitionIn.duration +"&&"+ TransitionType.isType(actor.transitionIn) +"="+ (actor.getActorDuration() <= actor.transitionIn.duration && TransitionType.isType(actor.transitionIn)));
 		
+		//System.out.println(actor.getActorDuration() +">="+ (actor.getLength() - actor.transitionOut.duration) +"&&"+ TransitionType.isType(actor.transitionOut) +"="+ (actor.getActorDuration() >= (actor.getLength() - actor.transitionOut.duration) && TransitionType.isType(actor.transitionOut)));
+		
+		
+		if(actor.getActorDuration() <= actor.transitionIn.duration && TransitionType.isType(actor.transitionIn)) Fade(actor, true);
+		else if(actor.getActorDuration() >= (actor.getLength() - actor.transitionOut.duration) && TransitionType.isType(actor.transitionOut)) Fade(actor, false);
 		
 		this.transitionTicks++;
 	}
@@ -41,16 +51,21 @@ public class Transition
 	{
 		if(transitionIn) 
 		{
-			int fadeSteps = ( 255 / actor.transitionIn.duration);
+			this.fadeSteps += (double)( 255 /  (double)actor.transitionIn.duration);
 			
-			this.alpha = (this.alpha + fadeSteps) > 255 ? 255 : this.alpha + fadeSteps;
+			int add = (int) Math.round(this.fadeSteps);
+			
+			this.alpha = (this.alpha + add) > 255 ? 255 : this.alpha + add;
 			
 		}else
 		{
-			int fadeSteps = ( 255 / actor.transitionOut.duration);
+			this.fadeSteps -= (double)( 255 /  (double)actor.transitionOut.duration);
 			
-			this.alpha = (this.alpha - fadeSteps) < 0 ? 0 : this.alpha - fadeSteps;
+			int add = (int) Math.round(this.fadeSteps);
+			
+			this.alpha = (this.alpha - add) < 0 ? 0 : this.alpha - add;
 		}
+		
 		this.init = true;
 	}
 	
@@ -61,21 +76,21 @@ public class Transition
 	
 	public enum TransitionType
 	{
-		Fade("fade", 5, 0),
-		Slide("slide", 5, 1);
+		Fade("fade", 500, 0),
+		Slide("slide", 500, 1);
 		
 		String type;
-		int duration;
+		long duration;
 		int side;
 		
-		TransitionType(String type, int duration)
+		TransitionType(String type, long duration)
 		{
 			this.type=type;
 			this.duration = duration;
 			this.side = 0;
 		}
 		
-		TransitionType(String type, int duration, int outDuration)
+		TransitionType(String type, long duration, int outDuration)
 		{
 			this.type=type;
 			this.duration = duration;
@@ -93,7 +108,7 @@ public class Transition
 			    return false;
 		}
 		
-		TransitionType setInDuration(int newDuration)
+		TransitionType setInDuration(long newDuration)
 		{
 			this.duration = newDuration;
 			return this;
@@ -118,13 +133,32 @@ public class Transition
 	    	
 	      if (type.type.equals(data.get(0).getAsString()))
 	      {
+        	  long val = 0;
+        	  
+			  JsonArray timeList = data.get(1).getAsJsonArray();
+
+			  int minInMilisecs = 0;
+			  int secInMilisecs = 0;
+			  int milisecs = 0;
+			  
+			  if(timeList.size() != 3) 
+			  {
+				  CutScene.logger.log(Level.ERROR, "Tried to Deserialize Duration into Milisecs! Time is not in correct format in json [min,secs,milisecs]");
+			  }
+			  minInMilisecs = (timeList.get(0).getAsInt() * 60000);
+			  secInMilisecs = (timeList.get(1).getAsInt() * 1000);
+			  milisecs = timeList.get(2).getAsInt();
+			  
+			  val = (long)(minInMilisecs + secInMilisecs + milisecs);
+			  
+	
 	    	  if(data.size() == 3)
 	    	  {
-	    		  return type.setInDuration(data.get(1).getAsInt()).setSide(data.get(2).getAsInt());
+	    		  return type.setInDuration(val).setSide(data.get(2).getAsInt());
 	    	  }
 	    	  else if(data.size() == 2)
 	    	  {
-	    		  return type.setInDuration(data.get(1).getAsInt());
+	    		  return type.setInDuration(val);
 	    	  }
 	        
 	      }

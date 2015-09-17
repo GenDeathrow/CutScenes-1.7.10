@@ -19,15 +19,19 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
+import com.gendeathrow.cutscene.client.audio.GuiPlaySound;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
-import com.gendeathrow.cutscene.utils.Utils;
 import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
+import com.gendeathrow.cutscene.utils.Utils;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
@@ -43,11 +47,15 @@ public class ActorObject implements Comparable
 	private String resourcePath;
 	private String displayText;
 	private ActorType type;
+	public transient boolean isDone; 
 	
 	public transient SegmentObject segment;
 	
 	@SerializedName("duration")
 	public int tickLength;
+	
+	public long timeStart;
+	private long timeDuration;
 	
 	public int actorTick;
 	public int startTick;
@@ -71,10 +79,16 @@ public class ActorObject implements Comparable
 	
 	public int zLevel;
 	
-	public transient ResourceLocation resourceLocation;
+	private transient ResourceLocation resourceLocation;
 	
 	transient SoundHandler soundHandler;
-	transient boolean hasPlaySound;
+	private transient boolean hasPlaySound;
+	
+	// Sound 
+	private float volume;
+	private float pitch;
+	private boolean canRepeat;
+	private int repeatDelay;
 	
 	private Alignment alignment;
 	
@@ -92,13 +106,19 @@ public class ActorObject implements Comparable
 		this.width = 0;
 		this.height = 0;
 		this.tickLength = 5;
+		this.timeDuration = 5000;
+		
+		this.volume = 1;
+		this.pitch = 1;
+		this.canRepeat = false;
+		this.repeatDelay = 1;
 		this.hasPlaySound = false;
+		this.isDone = false;
 	}
 	
 	
 	public void init(SegmentObject segmentObj)
 	{
-		
 		this.segment = segmentObj;
 		
 		if(type == ActorType.IMAGE && this.resourcePath != null)
@@ -158,7 +178,6 @@ public class ActorObject implements Comparable
 			this.resourceLocation = new ResourceLocation("ccsfiles", Utils.encodeName(path));
 		}
 		
-		
 	}
 	
 	public ResourceLocation getResource()
@@ -166,15 +185,32 @@ public class ActorObject implements Comparable
 		return new ResourceLocation(CutScene.MODID ,Loader.instance().getConfigDir()+"\\"+ this.resourcePath);
 	}
 	
-	public int getEndTick()
+	public long getStartTime()
 	{
-		return this.startTick + this.tickLength;
+		return this.timeStart;
 	}
+	public long getStopTime()
+	{
+		return (this.timeStart + this.timeDuration);
+	}
+	
+	public long getLength()
+	{
+		return this.timeDuration;
+	}
+	
+	public long getActorDuration()
+	{
+		return (Minecraft.getSystemTime() - this.startTime);
+	}
+	
+	boolean firstload = true;
+	private long startTime;
 	
 	@SideOnly(Side.CLIENT)
 	public void DrawActor(SceneObject sceneObject, SegmentObject segment, Minecraft mc)
 	{
-		//System.out.println("type:"+ this.type.type);
+		if (firstload) { firstload = false;  this.startTime = Minecraft.getSystemTime();}
 
 		FontRenderer fontObj = sceneObject.guiParent.fontObj;
 		if(type == ActorType.IMAGE)
@@ -187,7 +223,7 @@ public class ActorObject implements Comparable
 		}
 		else if (type == ActorType.SOUND && !this.hasPlaySound)
 		{
-			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(this.resourceLocation, 1.0F));
+			Minecraft.getMinecraft().getSoundHandler().playSound(new GuiPlaySound(sceneObject.guiParent, this.resourceLocation, this.volume, this.pitch, this.canRepeat, this.repeatDelay));
 			this.hasPlaySound = true;
 		}
 		
@@ -202,10 +238,6 @@ public class ActorObject implements Comparable
 		this.actorTick++;
 	}
 	
-	private void DrawDebug()
-	{
-		
-	}
 	private void DrawText(Minecraft mc, FontRenderer fontObj)
 	{
 		List wrap = fontObj.listFormattedStringToWidth(displayText, mc.currentScreen.width - 30);
@@ -215,6 +247,7 @@ public class ActorObject implements Comparable
 		
 		//System.out.println(this.transition.alpha + "<<<<<<<<<<<<<<<<<<<<<<<"+this.displayText.substring(0, 5));
 		
+		if(this.transition.alpha < 5) return;
 		
 		GL11.glEnable(GL11.GL_BLEND);
 
@@ -228,9 +261,10 @@ public class ActorObject implements Comparable
 			int textWidth = fontObj.getStringWidth(line);
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
 
-			if(this.transition.alpha != 0)fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
+			if(this.transition.alpha != 0) fontObj.drawString(line, alignment.x + this.offsetX, alignment.y + this.offsetY + lineOffset , RenderAssist.getColorFromRGBA(this.textRGBColor[0], this.textRGBColor[1], this.textRGBColor[2], this.transition.alpha));
 			
 			this.width = textWidth > this.width ? textWidth : this.width;
+
 			 		
 			this.height = index+1 * fontObj.FONT_HEIGHT + 2;
 			index++;
@@ -254,12 +288,6 @@ public class ActorObject implements Comparable
 		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, this.imageWidth, this.imageHeight, this.transition.alpha);
 
 		//System.out.println(alignment.x +" "+ alignment.y+ " "+ this.offsetY+" "+ this.posX);
-	}
-	
-	private void playSound()
-	{
-		//SoundEventAccessorComposite sound = soundHandler.getSound(this.resourceLocation);
-		
 	}
 	
 	public enum ActorType
@@ -288,6 +316,43 @@ public class ActorObject implements Comparable
 	        return type;
 	    }
 	    return null;
+	  }
+
+	}
+	
+	public class ActorDurationDeserializer implements JsonDeserializer<Long>
+	{
+		
+	  @Override
+	  public Long deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)  throws JsonParseException
+	  {
+		  long val = 0;
+
+		  if (json.isJsonArray())
+		  {
+			  JsonArray timeList = json.getAsJsonArray();
+
+			  int minInMilisecs = 0;
+			  int secInMilisecs = 0;
+			  int milisecs = 0;
+			  
+			  if(timeList.size() != 3) 
+			  {
+				  CutScene.logger.log(Level.ERROR, "Tried to Deserialize Duration into Milisecs! Time is not in correct format in json [min,secs,milisecs]");
+				  return val;
+			  }
+			  minInMilisecs = (timeList.get(0).getAsInt() * 60000);
+			  secInMilisecs = (timeList.get(1).getAsInt() * 1000);
+			  milisecs = timeList.get(2).getAsInt();
+			  
+			  val = (long)(minInMilisecs + secInMilisecs + milisecs);
+		  }
+		  else
+		  {
+			  val = json.getAsLong();
+		  }
+	    
+	    return val;
 	  }
 
 	}
