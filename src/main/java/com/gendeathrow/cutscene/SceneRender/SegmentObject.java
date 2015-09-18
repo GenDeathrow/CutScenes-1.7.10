@@ -94,11 +94,11 @@ public class SegmentObject
 			int width = mc.currentScreen.width;
 			
 			if(sceneObject.showDebug) 
-				{
-					sceneObject.guiParent.fontObj.drawString("CurSegment: "+sceneObject.guiParent.currentPhase + " Segment Time:"+ Utils.getTimeFormater(this.getSegmentDuration()) + " Close on: "+ Utils.getTimeFormater(this.segmentLength),0, mc.fontRenderer.FONT_HEIGHT * 2, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
-					sceneObject.guiParent.fontObj.drawString("Segment Time:"+ Utils.getTimeFormater(this.getSegmentDuration()),0, mc.fontRenderer.FONT_HEIGHT * 3 + 3, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
-					sceneObject.guiParent.fontObj.drawString("Close on: "+ Utils.getTimeFormater(this.segmentLength),0, mc.fontRenderer.FONT_HEIGHT * 4 + 6, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
-				}
+			{
+					sceneObject.guiParent.fontObj.drawString("Current Segment: "+sceneObject.guiParent.currentPhase,0, mc.fontRenderer.FONT_HEIGHT * 2, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+					sceneObject.guiParent.fontObj.drawString("Duration:"+ Utils.getTimeFormater(this.getSegmentDuration()),0, mc.fontRenderer.FONT_HEIGHT * 3 + 3, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+					sceneObject.guiParent.fontObj.drawString("Total Duration: "+ Utils.getTimeFormater(this.segmentLength),0, mc.fontRenderer.FONT_HEIGHT * 4 + 6, RenderAssist.getColorFromRGBA(255, 255, 255, 255));
+			}
 
 			this.segmentTick++;
 			

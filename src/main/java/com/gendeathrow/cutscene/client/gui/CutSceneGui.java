@@ -1,6 +1,7 @@
 package com.gendeathrow.cutscene.client.gui;
 
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -38,13 +39,18 @@ public class CutSceneGui extends GuiScreen
 	{
 
 		this.startTime = Minecraft.getSystemTime();
+	
+        if (scenePath.endsWith(".json"))
+        {
+        	scenePath = scenePath.substring(0, scenePath.length() - 5);
+        }
 		
-		this.scenePath = scenePath;
-		this.renderTicks = 0;
-		this.currentPhase =0;
-		this.scene = GsonReader.GsonReadFromFile(scenePath);
+		this.scenePath = scenePath + ".json";
+		this.currentPhase = 0;
 		
-		this.scene.init(this);
+		this.scene = GsonReader.GsonReadFromFile(this.scenePath);
+		
+	
 	}
 	
     /**
@@ -65,6 +71,8 @@ public class CutSceneGui extends GuiScreen
 		this.stopButton = new GuiButton(1, this.width - 35, this.height - 30, 15, 20,  "S");
 		
 		this.buttonList.add(this.reloadButton);
+		
+		if(this.scene != null)	this.scene.init(this);
 
     }
 
@@ -92,7 +100,7 @@ public class CutSceneGui extends GuiScreen
 	{
 		if (firstload) { firstload = false;  this.startTime = Minecraft.getSystemTime();}
 		
-		
+		if (this.scene == null) {mc.displayGuiScreen(null); return;}
 		if(!this.scene.finalize)    this.reloadButton.visible = true;
 		if(this.scene.closeScene && this.scene.finalize) 	
 		{

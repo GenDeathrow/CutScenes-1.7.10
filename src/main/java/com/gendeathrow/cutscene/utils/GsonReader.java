@@ -24,7 +24,7 @@ public class GsonReader
 {
 	public GsonReader(){}
 	
-	public static SceneObject GsonReadFromFile(String filePath) throws StackOverflowError
+	public static SceneObject GsonReadFromFile(String filePath) 
 	{
 		try{
 		    ActorObject ActorObject = new ActorObject();
@@ -67,9 +67,15 @@ public class GsonReader
 		   return screenObj;
 		    
 		  } catch (IOException e) {  
-		   e.printStackTrace();  
-		  }
-		  
+			  e.printStackTrace();  
+		   return null;
+		  } catch (StackOverflowError e) {  
+			   e.printStackTrace();  
+			   return null;
+		  } catch (NullPointerException e) {  
+			  e.printStackTrace();  
+			  return null;
+		  } 
 		}catch(JsonSyntaxException e)
 		{
 			CutScene.logger.log(Level.ERROR, "There is a Syntax Error in your Json file. You better fix that! \n"+ e);

@@ -4,12 +4,16 @@ FILE_NAME=`echo "CustomCutScene-1.7.10-GD_CCS_VER.jar"`
 FILE_LOCATION=`echo "./build/libs/$FILE_NAME"`
 CHANGE_LOG=`git log -1 --pretty=format:"%B"`
 
+RELEASETYPE=$(grep -oP "<releaseType>(.*)</releaseType>" config.xml | cut -d '>' -f 2 | cut -d '<' -f 1)
+
+GAMEVERSION=$(grep -oP "<mcVersion>(.*)</mcVersion>" config.xml | cut -d '>' -f 2 | cut -d '<' -f 1)
+
 # Curse project ID. Can normally found in the project URL
 #CURSE_ID=`echo "$CURSE_PROJECT_ID"`
 
 #See https://github.com/curseforge/api for how to retrieve game version numbers
 #https://minecraft.curseforge.com/api/game/versions?token=myapitoken
-JSON=`printf '{"changelog": "%s", "gameVersions": [4449], "releaseType": "alpha"}' "$CHANGE_LOG"`
+JSON=`printf '{"changelog": "%s", "gameVersions": $GAMEVERSION, "releaseType": "$RELEASETYPE"}' "$CHANGE_LOG"`
 
 echo "Uploading $FILE_NAME to Curse Forge..."
 echo

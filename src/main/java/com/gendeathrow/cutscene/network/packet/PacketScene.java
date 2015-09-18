@@ -63,7 +63,7 @@ public class PacketScene implements IMessage
 			
 			if(message.controlID == SceneControls.Play.id)
 			{
-				Minecraft.getMinecraft().displayGuiScreen(new CutSceneGui("/customcutscenes/splashscreen.json"));
+				Minecraft.getMinecraft().displayGuiScreen(new CutSceneGui("customcutscenes/"+ message.scene));
 			}
 			
 			return null;
