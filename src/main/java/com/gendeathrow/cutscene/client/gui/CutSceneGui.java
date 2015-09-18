@@ -1,22 +1,14 @@
 package com.gendeathrow.cutscene.client.gui;
 
-import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Date;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
-import com.gendeathrow.cutscene.MovieRender.MovieReader;
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
-import com.gendeathrow.cutscene.SceneRender.SegmentObject;
 import com.gendeathrow.cutscene.utils.GsonReader;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 import com.gendeathrow.cutscene.utils.Utils;
-import com.ibm.icu.text.DateFormat;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

@@ -1,6 +1,5 @@
 package com.gendeathrow.cutscene.SceneRender;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
@@ -30,7 +29,6 @@ public class SceneObject
 	private int curSegment;
 	public transient CutSceneGui guiParent;
 	
-	public transient static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("m:s:A");
 	public transient boolean closeScene = false;
 	
 	

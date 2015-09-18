@@ -1,16 +1,12 @@
 package com.gendeathrow.cutscene.client;
 
 
-import java.io.IOException;
+import net.minecraft.client.Minecraft;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.client.Minecraft;
-
 import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.core.CutScene;
-import com.gendeathrow.cutscene.utils.GsonReader;
-import com.gendeathrow.cutscene.utils.RenderAssist;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;

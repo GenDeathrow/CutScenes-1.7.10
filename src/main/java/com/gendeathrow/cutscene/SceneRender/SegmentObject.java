@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import net.minecraft.client.Minecraft;
 
-import com.gendeathrow.cutscene.client.gui.CutSceneGui;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 import com.gendeathrow.cutscene.utils.Utils;
 

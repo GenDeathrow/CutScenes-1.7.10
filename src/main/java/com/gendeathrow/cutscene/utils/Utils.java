@@ -7,18 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.Language;
 
-import org.apache.commons.io.IOUtils;
-
-import com.gendeathrow.cutscene.core.ConfigHandler;
-import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.core.Settings;
 
 public class Utils 
