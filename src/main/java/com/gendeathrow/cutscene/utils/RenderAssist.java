@@ -20,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import com.gendeathrow.cutscene.SceneRender.ActorObject.ActorType;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -481,6 +482,39 @@ public class RenderAssist {
 		tessellator.addVertexWithUV((double)(x + (width * scale)), (double)(y + 0), 0, (double)((float)(u + width) * f), (double)((float)(v + 0) * f1));
 		tessellator.addVertexWithUV((double)(x + 0), (double)(y + 0), 0, (double)((float)(u + 0) * f), (double)((float)(v + 0) * f1));
 		tessellator.draw();
+	}
+	
+	public static ResourceLocation getActorResourceLocation(Minecraft mc, String resourcePath, ActorType type)
+	{
+		
+		if(resourcePath.contains(":")) 
+		{
+			String[] args = resourcePath.split(":");
+			
+			return new ResourceLocation(resourcePath);
+		}
+		else
+		{
+			String path = "";
+			if(type == ActorType.IMAGE) 
+			{
+				 if(resourcePath.endsWith(".png"))
+		         {
+		        	 path = resourcePath.substring(0, resourcePath.length() - 4);
+		         }
+				return new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
+			}
+			else if(type == ActorType.SOUND) 
+			{
+				 if(resourcePath.endsWith(".ogg"))
+		         {
+		        	 path = resourcePath.substring(0, resourcePath.length() - 4);
+		         }
+				return new ResourceLocation("ccsfiles", Utils.encodeName(path));
+			}
+		}
+		
+		return null;
 	}
 	
 	

@@ -52,26 +52,10 @@ public class CutScene
 			
 			logger = event.getModLog();
 			
-			this.config = new ConfigHandler(event);
-		    try
-		    {
-		      this.config.load();
-		    }
-		    catch (Exception e)
-		    {
-		      this.logger.log(Level.ERROR, "Error while loading config file. Why does this always happen");
-		      throw new RuntimeException(e);
-		    }
-		    
-			
-			
 			proxy.preInit(event);
 
-			this.network = NetworkRegistry.INSTANCE.newSimpleChannel(Channel);
-			this.network.registerMessage(PacketScene.HandlerServer.class, PacketScene.class, 0, Side.SERVER);
-			this.network.registerMessage(PacketScene.HandlerClient.class, PacketScene.class, 1, Side.CLIENT);
-			
-//			PacketDispatcher.registerPackets();
+			this.network = NetworkRegistry.INSTANCE.newSimpleChannel(CutScene.Channel);
+			this.network.registerMessage(PacketScene.HandlerClient.class, PacketScene.class, 0, Side.CLIENT);	
 			
 		}
 	    @EventHandler

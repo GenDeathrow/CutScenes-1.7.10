@@ -1,10 +1,15 @@
 package com.gendeathrow.cutscene.core.proxies;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.gendeathrow.cutscene.client.ClientTickHandler;
 import com.gendeathrow.cutscene.client.Gui_EventHandler;
+import com.gendeathrow.cutscene.core.ConfigHandler;
+import com.gendeathrow.cutscene.core.CutScene;
+import com.gendeathrow.cutscene.network.packet.PacketScene;
 import com.gendeathrow.cutscene.utils.Utils;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -38,6 +43,19 @@ public class ClientProxy extends CommonProxy{
 	public void preInit(FMLPreInitializationEvent event) {
 		// TODO Auto-generated method stub
 		
+		
+		CutScene.instance.config = new ConfigHandler(event);
+	    try
+	    {
+	    	CutScene.instance.config.load();
+	    }
+	    catch (Exception e)
+	    {
+	    	CutScene.logger.log(Level.ERROR, "Error while loading config file. Why does this always happen");
+	    	throw new RuntimeException(e);
+	    }
+	    
+	    
 		Utils.LoadResources();
 		//SoundAssist.LoadAlData();
 		

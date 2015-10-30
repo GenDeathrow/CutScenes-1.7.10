@@ -3,9 +3,11 @@ package com.gendeathrow.cutscene.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 
 import org.apache.logging.log4j.Level;
@@ -46,7 +48,7 @@ public class Gui_EventHandler {
 	public void onPlayerLoggedin(RenderGameOverlayEvent event)
 	{
 
-		if(firstload)
+		if(firstload && CutScene.proxy.isClient())
 		{
 			firstload = false;
 			
@@ -94,4 +96,23 @@ public class Gui_EventHandler {
 		}
 			
 	}
+	
+	@SubscribeEvent
+	public void deathEvent(LivingDeathEvent event)
+	{
+		if(!CutScene.proxy.isClient()) return;
+		
+		if(event.entityLiving instanceof EntityPlayer)
+		{
+			this.mc.displayGuiScreen(new CutSceneGui("/customcutscenes/"+Settings.file_OnPlayer_Death));	
+		}
+			
+	}
+	
+	public static void openGui(String scene)
+	{
+		Minecraft.getMinecraft().displayGuiScreen(new CutSceneGui(scene));
+	}
+	
+
 }	

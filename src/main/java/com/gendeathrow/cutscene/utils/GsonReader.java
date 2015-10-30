@@ -38,6 +38,7 @@ public class GsonReader
 		    gsonBuilder.registerTypeAdapter(RenderAssist.Alignment.class, RenderAssist.new AlignmentDeserializer());
 			gsonBuilder.registerTypeAdapter(ActorObject.ActorType.class, ActorObject.new ActorTypeDeserializer());
 			gsonBuilder.registerTypeAdapter(long.class, ActorObject.new ActorDurationDeserializer());
+			//gsonBuilder.registerTypeAdapter(int.class, ActorObject.new ActorImageSizeDeserializer());
 			gsonBuilder.registerTypeAdapter(Transition.TransitionType.class, Transition.new TransitionTypeDeserializer());
 
 
@@ -70,7 +71,8 @@ public class GsonReader
 			  e.printStackTrace();  
 		   return null;
 		  } catch (StackOverflowError e) {  
-			   e.printStackTrace();  
+			   e.printStackTrace();
+//			   System.out.println(e.getCause());
 			   return null;
 		  } catch (NullPointerException e) {  
 			  e.printStackTrace();  

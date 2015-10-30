@@ -6,10 +6,13 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ReportedException;
 
 import com.gendeathrow.cutscene.core.CutScene;
@@ -59,7 +62,23 @@ public class CutsceneSaveData
 //      //File file = new File(dir, fileName);
 
         String fileName = name + ".dat";
-        File file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator + fileName);
+        
+        Minecraft mc = Minecraft.getMinecraft();
+        File file = null;
+        if(mc.isIntegratedServerRunning())
+        {
+        	System.out.println(Minecraft.getMinecraft().mcDataDir.getPath()+  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator + fileName);
+        	   file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator + fileName);  	
+        }else if(MinecraftServer.getServer() != null)
+        {
+        	CutScene.logger.log(Level.WARN, "Servers dont save/load data for what cutscenes a player has seen. Yet!!");
+        	return false;
+        	//System.out.println(Minecraft.getMinecraft().mcDataDir.getPath()+  "saves" + File.separator +  MinecraftServer.getServer().getFolderName() + File.separator + fileName);
+        	//  file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + MinecraftServer.getServer().getFolderName() + File.separator + fileName);
+        }
+        
+      
+        if(file == null) return false;
 
         if (!file.exists()) 
         {
@@ -103,8 +122,20 @@ public class CutsceneSaveData
 
        String fileName = name + ".dat";
        File file = new File(dir, fileName);
-        
-       file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator +fileName);
+  
+       Minecraft mc = Minecraft.getMinecraft();
+       
+       if(mc.isIntegratedServerRunning())
+       {
+       	   file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator + fileName);  	
+       }else if(MinecraftServer.getServer() != null)
+       {
+    	   CutScene.logger.log(Level.WARN, "Servers dont save/load data for what cutscenes a player has seen. Yet!!");
+    	   return;
+       	  //file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + MinecraftServer.getServer().getFolderName() + File.separator + fileName);
+       }
+       
+       //file = new File(Minecraft.getMinecraft().mcDataDir.getPath(),  "saves" + File.separator + Minecraft.getMinecraft().getIntegratedServer().getFolderName() + File.separator +fileName);
 
        try {
             NBTTagCompound nbt = new NBTTagCompound();

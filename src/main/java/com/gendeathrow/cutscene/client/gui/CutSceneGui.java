@@ -1,5 +1,7 @@
 package com.gendeathrow.cutscene.client.gui;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -86,6 +88,20 @@ public class CutSceneGui extends GuiScreen
 	    }
 	 }
 	
+	@Override
+    protected void keyTyped(char p_73869_1_, int p_73869_2_)
+    {
+		
+		if(p_73869_2_ == Keyboard.KEY_SPACE)
+		{
+			
+			Minecraft.getMinecraft().getSoundHandler().stopSounds();
+			this.currentPhase += 1;
+			
+		}
+        super.keyTyped(p_73869_1_, p_73869_2_);
+    }
+    
 	boolean firstload = true;
 	@Override
 	public void drawScreen(int par1, int par2, float par3)

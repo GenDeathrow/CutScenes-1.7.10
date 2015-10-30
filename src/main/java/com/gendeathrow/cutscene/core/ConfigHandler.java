@@ -93,6 +93,10 @@ public class ConfigHandler
 		        input = getClass().getResourceAsStream("/assets/customcutscene/logo.png");
 		        ByteStreams.copy(input, output);
 		        
+		        output = new FileOutputStream(new File(devFolder, "en_US.lang"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/en_US.lang");
+		        ByteStreams.copy(input, output);
+		        
 		        output = new FileOutputStream(new File(devFolder, "sunset.png"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/sunset.png");
 		        ByteStreams.copy(input, output);

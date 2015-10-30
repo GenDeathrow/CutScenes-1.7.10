@@ -15,8 +15,9 @@ public class Settings
 	public static String file_OnPlayer_Login = "login.json";
 	
 	
-	
-	@SideOnly(Side.CLIENT)
 	public static boolean hasPlayedSeenLogin = false;
+	
+	public static boolean trigger_OnPlayer_Death = false;
+	public static String file_OnPlayer_Death = "death.json";
 	
 }

@@ -6,14 +6,19 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
@@ -21,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
 import com.gendeathrow.cutscene.client.audio.GuiPlaySound;
 import com.gendeathrow.cutscene.core.CutScene;
+import com.gendeathrow.cutscene.utils.MathHelper;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
 import com.gendeathrow.cutscene.utils.Utils;
@@ -28,10 +34,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
@@ -69,6 +73,9 @@ public class ActorObject implements Comparable
 	private int imageWidth;
 	private int imageHeight;
 	
+	private boolean imageStretchWidth;
+	private boolean imageStretchHeight;
+	
 	private transient int width;
 	private transient int height;
 	
@@ -92,8 +99,9 @@ public class ActorObject implements Comparable
 	
 	private Alignment alignment;
 	
-	private int[] textRGBColor; 
+	private int[] textRGBColor;
 	
+
 	public ActorObject()
 	{
 		this.type = ActorType.TEXT;
@@ -114,6 +122,10 @@ public class ActorObject implements Comparable
 		this.repeatDelay = 1;
 		this.hasPlaySound = false;
 		this.isDone = false;
+		
+		this.imageStretchHeight = false;
+		this.imageStretchWidth = false;
+		
 	}
 	
 	
@@ -126,13 +138,10 @@ public class ActorObject implements Comparable
 			try 
 			{
 				//this.resourceLocation = RenderAssist.ExternalResouceLocation(Loader.instance().getConfigDir()+ File.separator +"CustomCutScenes"+ File.separator +"assets/images"+ File.separator +this.resourcePath);
-				String path = this.resourcePath;
-				 if(this.resourcePath.endsWith(".png"))
-		         {
-		        	 path = this.resourcePath.substring(0, this.resourcePath.length() - 4);
-		         }
-						
-				this.resourceLocation = new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
+
+				//this.resourceLocation = new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
+					this.resourceLocation = RenderAssist.getActorResourceLocation(Minecraft.getMinecraft(), this.resourcePath, type);
+				
 				BufferedImage getImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.resourceLocation).getInputStream());
 				
 				if(this.imageHeight == 0) 
@@ -169,13 +178,7 @@ public class ActorObject implements Comparable
 		}
 		else if(type == ActorType.SOUND && this.resourcePath != null)
 		{
-			String path = this.resourcePath;
-			
-			 if(this.resourcePath.endsWith(".ogg"))
-	         {
-	        	 path = this.resourcePath.substring(0, this.resourcePath.length() - 4);
-	         }
-			this.resourceLocation = new ResourceLocation("ccsfiles", Utils.encodeName(path));
+			this.resourceLocation = RenderAssist.getActorResourceLocation(Minecraft.getMinecraft(), this.resourcePath, type);
 		}
 		
 	}
@@ -256,7 +259,9 @@ public class ActorObject implements Comparable
 		{
 			int lineOffset = index * fontObj.FONT_HEIGHT + 2;
 	
-			String line = (String) itWrap.next();
+			String line = StatCollector.translateToLocal((String) itWrap.next());
+			
+			
 			
 			int textWidth = fontObj.getStringWidth(line);
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
@@ -277,15 +282,30 @@ public class ActorObject implements Comparable
 	
 	private void DrawImage(Minecraft mc)
 	{
-
+		ScaledResolution resolution= new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		
+		int scaledImageWidth = this.imageWidth;
+		int scaledImageHeight = this.imageHeight;
+		
 		if(this.resourceLocation == null) return;
 		
 		this.alignment.getScreenAlignment(mc, alignment, this.imageWidth, this.imageHeight);
-
+		
+		if(this.imageStretchHeight) 
+		{
+			this.alignment.y = 0;
+			scaledImageHeight = resolution.getScaledHeight();
+		}
+		if(this.imageStretchWidth) 
+		{
+			this.alignment.x = 0;
+			scaledImageWidth = resolution.getScaledWidth();
+		}
+		
 		this.transition.update(this);
 		
 		RenderAssist.bindTexture(this.resourceLocation);
-		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, this.imageWidth, this.imageHeight, this.transition.alpha);
+		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, scaledImageWidth, scaledImageHeight, this.transition.alpha);
 
 		//System.out.println(alignment.x +" "+ alignment.y+ " "+ this.offsetY+" "+ this.posX);
 	}
@@ -356,6 +376,54 @@ public class ActorObject implements Comparable
 	  }
 
 	}
+	
+//	public class ActorImageSizeDeserializer implements JsonDeserializer<Integer>
+//	{
+//		
+//	  @Override
+//	  public Integer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)  throws JsonParseException
+//	  {	
+//		  try 
+//		  {
+//			  int i = json.getAsInt();
+//			  
+//			  return i;
+//		  }
+//		  catch(NumberFormatException er)
+//		  { 
+//			  try
+//			  {
+//				  String string = json.getAsString();
+//				  
+//				  Matcher matcher;
+//				  
+//				  if(string.toLowerCase().contains("screenwidth"))
+//				  {
+//					  Pattern widthPattern = Pattern.compile("screenwidth");
+//					  
+//					  string = string.replaceAll("screenwidth", Integer.toString(Minecraft.getMinecraft().currentScreen.width));
+//					    
+//				  }
+//				  else if(string.toLowerCase().contains("screenheight"))
+//				  {
+//					  Pattern heightPattern = Pattern.compile("screenheight");
+//					  string = string.replaceAll("screenheight", Integer.toString(Minecraft.getMinecraft().currentScreen.height));
+//					  
+//				  }
+//				  
+//				  int i = MathHelper.eval("("+ string +")");
+//				  
+//				  return i;
+//			  }
+//			  catch(Exception e)
+//			  {
+//				  e.printStackTrace();
+//			  }
+//		  }
+//		  return 10;
+//	  }
+//	}
+	
 
 	@Override
 	public int compareTo(Object arg0) 

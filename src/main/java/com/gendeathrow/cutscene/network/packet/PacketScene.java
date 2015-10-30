@@ -1,16 +1,14 @@
 package com.gendeathrow.cutscene.network.packet;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 
-import com.gendeathrow.cutscene.client.gui.CutSceneGui;
+import com.gendeathrow.cutscene.client.Gui_EventHandler;
+import com.gendeathrow.cutscene.core.CutScene;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PacketScene implements IMessage
 {
@@ -52,7 +50,6 @@ public class PacketScene implements IMessage
 		}
 	}
 	
-	@SideOnly(Side.CLIENT)
 	public static class HandlerClient implements IMessageHandler<PacketScene,IMessage>
 	{
 
@@ -63,7 +60,9 @@ public class PacketScene implements IMessage
 			
 			if(message.controlID == SceneControls.Play.id)
 			{
-				Minecraft.getMinecraft().displayGuiScreen(new CutSceneGui("customcutscenes/"+ message.scene));
+				
+				if(CutScene.proxy.isClient()) Gui_EventHandler.openGui("customcutscenes/"+ message.scene);
+					
 			}
 			
 			return null;
