@@ -4,12 +4,12 @@ import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 import com.gendeathrow.cutscene.core.command.CommandScene;
 import com.gendeathrow.cutscene.core.proxies.CommonProxy;
 import com.gendeathrow.cutscene.network.packet.PacketScene;
+import com.gendeathrow.cutscene.utils.Utils;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -27,7 +27,8 @@ import cpw.mods.fml.relauncher.Side;
 public class CutScene
 {
 	    public static final String MODID = "cutscene";
-	    public static final String VERSION = "GD_CCS_VER";
+	    //public static final String VERSION = "GD_CCS_VER";
+	    public static final String VERSION = "0.1.2";
 	    public static final String Name = "CustomCutScene";
 	    public static final String Proxy = "com.gendeathrow.cutscene.core.proxies";
 	    public static final String Channel = "CCS_GenD";
@@ -40,6 +41,8 @@ public class CutScene
 	    
 		@SidedProxy(clientSide = CutScene.Proxy + ".ClientProxy", serverSide = CutScene.Proxy + ".CommonProxy")
 		public static CommonProxy proxy;
+		
+		public static boolean updateCheck = true;
 
 		public SimpleNetworkWrapper network;
 		
@@ -49,6 +52,8 @@ public class CutScene
 		public void preInit(FMLPreInitializationEvent event)
 		{
 			System.out.println(Name +" VERSION:"+ VERSION);
+			
+			Utils.downloadDemoFile();
 			
 			logger = event.getModLog();
 			

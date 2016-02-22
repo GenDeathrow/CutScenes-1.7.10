@@ -99,5 +99,14 @@ public class SceneObject
 		}
 		else this.closeScene=true;
 	}
+
+
+	public void onSceneClose() 
+	{
+		for(SegmentObject segment : screenSegments)
+		{
+			segment.onSegmentClose();
+		}
+	}
 	
 }

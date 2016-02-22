@@ -1,4 +1,4 @@
-package com.gendeathrow.cutscene.SceneRender;
+package com.gendeathrow.cutscene.SceneRender.Actor;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,13 +19,15 @@ import net.minecraft.util.StatCollector;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
+import com.gendeathrow.cutscene.SceneRender.ActorObject;
+import com.gendeathrow.cutscene.SceneRender.SceneObject;
+import com.gendeathrow.cutscene.SceneRender.SegmentObject;
+import com.gendeathrow.cutscene.SceneRender.Transition;
 import com.gendeathrow.cutscene.SceneRender.Transition.TransitionType;
 import com.gendeathrow.cutscene.client.audio.GuiPlaySound;
-import com.gendeathrow.cutscene.client.render.AnimTexture;
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.utils.RenderAssist;
 import com.gendeathrow.cutscene.utils.RenderAssist.Alignment;
-import com.gendeathrow.cutscene.utils.UpdateChecker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -41,12 +43,12 @@ import cpw.mods.fml.relauncher.SideOnly;
  * Actors are images / sound / text added to a current segment or cutscene
  * @author GenDeathrow
  */
-public class ActorObject implements Comparable
+public class ActorObjectBase implements Comparable
 {
 	@SerializedName("resource")
 	private String resourcePath;
 	private String displayText;
-	private ActorType type;
+	private ActorObject.ActorType type;
 	public transient boolean isDone; 
 	
 	public transient SegmentObject segment;
@@ -97,15 +99,10 @@ public class ActorObject implements Comparable
 	
 	private int[] textRGBColor;
 	
-	//animated images
-	
-	private transient AnimTexture aTex;
-	private int aniLoop;
-	
 
-	public ActorObject()
+	public ActorObjectBase()
 	{
-		this.type = ActorType.TEXT;
+		this.type = ActorObject.ActorType.TEXT;
 		this.alignment = RenderAssist.Alignment.CENTER_CENTER;
 		this.textRGBColor = new int[]{255,255,255};
 		this.transition = new Transition();
@@ -127,20 +124,6 @@ public class ActorObject implements Comparable
 		this.imageStretchHeight = false;
 		this.imageStretchWidth = false;
 		
-		this.aTex = null;
-		this.aniLoop = -1;
-		
-	}
-	
-	public static void createUpdateNotification(SceneObject scene)
-	{
-		ActorObject updateNot = new ActorObject();
-		
-		updateNot.alignment = Alignment.TOP_CENTER;
-		updateNot.displayText = UpdateChecker.displayUpdateCheck();
-		updateNot.textRGBColor = new int[]{255,255,0};
-		
-		scene.getSegment(0).actorArray.add(updateNot);
 	}
 	
 	
@@ -148,7 +131,7 @@ public class ActorObject implements Comparable
 	{
 		this.segment = segmentObj;
 		
-		if(type == ActorType.IMAGE && this.resourcePath != null)
+		if(type == ActorObject.ActorType.IMAGE && this.resourcePath != null)
 		{
 			try 
 			{
@@ -158,67 +141,33 @@ public class ActorObject implements Comparable
 				
 				this.resourceLocation = RenderAssist.getActorResourceLocation(Minecraft.getMinecraft(), this.resourcePath, type);
 				
-				if(this.resourceLocation.getResourcePath().endsWith(".gif"))
+				BufferedImage getImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.resourceLocation).getInputStream());
+				
+				if(this.imageHeight == 0) 
 				{
-					this.aTex = new AnimTexture(this.resourceLocation);
-					this.aTex.setLoop(this.aniLoop);
-					
-					if(aTex.getHeight() == 0) 
+					int constraints = 1;
+					if(this.imageWidth != 0)
 					{
-						int constraints = 1;
-						if(this.imageWidth != 0)
-						{
-							constraints = (aTex.getWidth() / this.imageWidth);
-						}
-					
-						this.imageHeight = aTex.getHeight() * constraints;
+						constraints = (getImage.getWidth() / this.imageWidth);
 					}
-					if(aTex.getWidth() == 0) 
-					{
-						int constraints = 1;
-						if(this.imageHeight != 0)
-						{
-							constraints = (aTex.getHeight() / this.imageHeight);
-						}
 					
-						this.imageWidth = aTex.getWidth() * constraints;
-					}
-				
-					this.width = this.imageWidth;
-					this.height = this.imageHeight;
-					
+					this.imageHeight = getImage.getHeight() * constraints;
 				}
-				else
+				if(this.imageWidth == 0) 
 				{
-				
-					BufferedImage getImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(this.resourceLocation).getInputStream());
-				
-					if(this.imageHeight == 0) 
+					int constraints = 1;
+					if(this.imageHeight != 0)
 					{
-						int constraints = 1;
-						if(this.imageWidth != 0)
-						{
-							constraints = (getImage.getWidth() / this.imageWidth);
-						}
-					
-						this.imageHeight = getImage.getHeight() * constraints;
+						constraints = (getImage.getHeight() / this.imageHeight);
 					}
-					if(this.imageWidth == 0) 
-					{
-						int constraints = 1;
-						if(this.imageHeight != 0)
-						{
-							constraints = (getImage.getHeight() / this.imageHeight);
-						}
 					
-						this.imageWidth = getImage.getWidth() * constraints;
-					}
-				
-					this.width = this.imageWidth;
-					this.height = this.imageHeight;
-				
-					getImage = null;
+					this.imageWidth = getImage.getWidth() * constraints;
 				}
+				
+				this.width = this.imageWidth;
+				this.height = this.imageHeight;
+				
+				getImage = null;
 				
 			} catch (IOException e) 
 			{
@@ -226,7 +175,7 @@ public class ActorObject implements Comparable
 				e.printStackTrace();  
 			}
 		}
-		else if(type == ActorType.SOUND && this.resourcePath != null)
+		else if(type == ActorObject.ActorType.SOUND && this.resourcePath != null)
 		{
 			this.resourceLocation = RenderAssist.getActorResourceLocation(Minecraft.getMinecraft(), this.resourcePath, type);
 		}
@@ -266,15 +215,15 @@ public class ActorObject implements Comparable
 		if (firstload) { firstload = false;  this.startTime = Minecraft.getSystemTime();}
 
 		FontRenderer fontObj = sceneObject.guiParent.fontObj;
-		if(type == ActorType.IMAGE)
+		if(type == ActorObject.ActorType.IMAGE)
 		{
 			this.DrawImage(mc);
 		}
-		else if(type == ActorType.TEXT)
+		else if(type == ActorObject. ActorType.TEXT)
 		{
 			this.DrawText(mc, fontObj);
 		}
-		else if (type == ActorType.SOUND && !this.hasPlaySound)
+		else if (type == ActorObject.ActorType.SOUND && !this.hasPlaySound)
 		{
 			Minecraft.getMinecraft().getSoundHandler().playSound(new GuiPlaySound(sceneObject.guiParent, this.resourceLocation, this.volume, this.pitch, this.canRepeat, this.repeatDelay));
 			this.hasPlaySound = true;
@@ -296,7 +245,7 @@ public class ActorObject implements Comparable
 		List wrap = fontObj.listFormattedStringToWidth(displayText, mc.currentScreen.width - 30);
 		ListIterator itWrap = wrap.listIterator();
 
-		this.transition.update(this);
+		//TODO  suppose to be there gives error-> this.transition.update(this);
 		
 		//System.out.println(this.transition.alpha + "<<<<<<<<<<<<<<<<<<<<<<<"+this.displayText.substring(0, 5));
 		
@@ -310,6 +259,8 @@ public class ActorObject implements Comparable
 			int lineOffset = index * fontObj.FONT_HEIGHT + 2;
 	
 			String line = StatCollector.translateToLocal((String) itWrap.next());
+			
+			
 			
 			int textWidth = fontObj.getStringWidth(line);
 			this.alignment.getScreenAlignment(mc, alignment, textWidth, fontObj.FONT_HEIGHT);
@@ -350,16 +301,9 @@ public class ActorObject implements Comparable
 			scaledImageWidth = resolution.getScaledWidth();
 		}
 		
-		this.transition.update(this);
+		//TODO suppost to be there ---> this.transition.update(this);
 		
-		if(this.aTex == null) 
-		{
-			RenderAssist.bindTexture(this.resourceLocation);
-		}
-		else
-		{
-			this.aTex.bind();
-		}
+		RenderAssist.bindTexture(this.resourceLocation);
 		RenderAssist.drawTexturedModalRect(alignment.x + this.offsetX ,alignment.y  + this.offsetY, scaledImageWidth, scaledImageHeight, this.transition.alpha);
 
 		//System.out.println(alignment.x +" "+ alignment.y+ " "+ this.offsetY+" "+ this.posX);
@@ -485,19 +429,6 @@ public class ActorObject implements Comparable
 	{
 		int actorCompare = ((ActorObject)arg0).zLevel;
 		return this.zLevel-actorCompare;
-	}
-
-
-	public void onActorClose() 
-	{
-		if(type == ActorType.IMAGE)
-		{
-			if(this.resourceLocation.getResourcePath().endsWith(".gif"))
-			{
-				if(this.aTex != null) this.aTex.delete();
-			}
-		}
-
 	}
 
 

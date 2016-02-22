@@ -113,6 +113,10 @@ public class ConfigHandler
 		        input = getClass().getResourceAsStream("/assets/customcutscene/world.png");
 		        ByteStreams.copy(input, output);
 		        
+		        output = new FileOutputStream(new File(devFolder, "fire.gif"));
+		        input = getClass().getResourceAsStream("/assets/customcutscene/fire.gif");
+		        ByteStreams.copy(input, output);
+		        
 		        output = new FileOutputStream(new File(devFolder, "Dead_Reckoning.ogg"));
 		        input = getClass().getResourceAsStream("/assets/customcutscene/Dead_Reckoning.ogg");
 		        ByteStreams.copy(input, output);

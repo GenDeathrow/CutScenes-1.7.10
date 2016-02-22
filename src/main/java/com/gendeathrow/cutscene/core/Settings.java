@@ -1,7 +1,5 @@
 package com.gendeathrow.cutscene.core;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class Settings 
 {

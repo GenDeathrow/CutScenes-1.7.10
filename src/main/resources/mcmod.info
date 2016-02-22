@@ -5,12 +5,12 @@
   "description": "Create your own story-line for your mod",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "http://minecraft.curseforge.com/projects/custom-cutscenes-splashscreen",
   "updateUrl": "",
   "authorList": ["GenDeathrow"],
-  "credits": "Darkosto",
-  "logoFile": "",
-  "screenshots": [],
+  "credits": "Darkosto, FunwayGuy",
+  "logoFile": "cutsceneLogo.png",
+  "screenshots": ["cutsceneLogo.png"],
   "dependencies": []
 }
 ]

@@ -25,6 +25,7 @@ public class Gui_EventHandler {
 	
 	Minecraft mc = Minecraft.getMinecraft();
 	
+
 	@SubscribeEvent
 	public void onGuiRender(RenderGameOverlayEvent.Post event)
 	{
@@ -39,9 +40,13 @@ public class Gui_EventHandler {
 		//System.out.println("World Load: "+ worldEvent.world.getWorldInfo().getWorldName());
 		//this.mc.displayGuiScreen(new CutSceneGui("/customcutscenes/splashscreen.json"));
 		
+
+		
 	}
 	
 	boolean firstload = true;
+	
+	
 	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -90,7 +95,7 @@ public class Gui_EventHandler {
 	@SubscribeEvent
 	public void onSoundPlay(PlaySoundEvent17 event)
 	{
-		if(event.category == SoundCategory.MUSIC && Minecraft.getMinecraft().currentScreen instanceof CutSceneGui)
+		if(event.category == SoundCategory.MUSIC && (Minecraft.getMinecraft().currentScreen instanceof CutSceneGui))
 		{
 			event.result = null;
 		}

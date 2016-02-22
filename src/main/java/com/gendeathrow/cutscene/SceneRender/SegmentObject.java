@@ -117,4 +117,12 @@ public class SegmentObject
 			}
 				
 	}
+
+	public void onSegmentClose() 
+	{
+		for(ActorObject actor : actorArray)
+		{
+			actor.onActorClose();
+		}
+	}
 }

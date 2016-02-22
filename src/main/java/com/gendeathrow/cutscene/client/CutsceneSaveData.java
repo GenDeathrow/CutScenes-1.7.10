@@ -6,14 +6,14 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ReportedException;
+
+import org.apache.logging.log4j.Level;
 
 import com.gendeathrow.cutscene.core.CutScene;
 import com.gendeathrow.cutscene.core.Settings;

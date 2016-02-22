@@ -19,6 +19,31 @@
 		},
         {
 		  "type": "image",
+	      "resource": "fire.gif",
+		  "aniLoop" : 3,
+		  "alignment" : "Bottom_Left",
+		  "imageWidth": "150",
+		  "imageHeight": "300",
+		  "timeStart": [0,1,0],
+		  "timeDuration": [0,9,250],
+		  "transitionIn" : ["fade",[0,1,0]],
+		  "transitionOut" : ["fade",[0,1,0]],
+		  "zLevel" : "5"
+		},
+		{
+		  "type": "image",
+	      "resource": "fire.gif",
+		  "alignment" : "Bottom_Right",
+		  "imageWidth": "150",
+		  "imageHeight": "300",
+		  "timeStart": [0,1,0],
+		  "timeDuration": [0,9,250],
+		  "transitionIn" : ["fade",[0,1,0]],
+		  "transitionOut" : ["fade",[0,1,0]],
+		  "zLevel" : "5"
+		},
+        {
+		  "type": "image",
 	      "resource": "logo.png",
 		  "alignment" : "CENTER_CENTER",
 		  "imageWidth": "256",

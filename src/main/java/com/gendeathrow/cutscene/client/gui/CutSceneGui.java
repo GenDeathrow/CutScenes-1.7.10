@@ -1,12 +1,13 @@
 package com.gendeathrow.cutscene.client.gui;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import org.lwjgl.input.Keyboard;
+
+import com.gendeathrow.cutscene.SceneRender.ActorObject;
 import com.gendeathrow.cutscene.SceneRender.SceneObject;
 import com.gendeathrow.cutscene.utils.GsonReader;
 import com.gendeathrow.cutscene.utils.RenderAssist;
@@ -67,6 +68,11 @@ public class CutSceneGui extends GuiScreen
 		this.buttonList.add(this.reloadButton);
 		
 		if(this.scene != null)	this.scene.init(this);
+		
+		if(this.scene.showDebug) 
+		{
+			ActorObject.createUpdateNotification(this.scene);
+		}
 
     }
 
@@ -125,6 +131,13 @@ public class CutSceneGui extends GuiScreen
 		super.drawScreen(par1, par2, par3);
 		this.renderTicks++;
 	}
+	
+	@Override
+    public void onGuiClosed() 
+    {
+    	this.scene.onSceneClose();
+    }
+
 	
 	public void drawBackground()
 	{

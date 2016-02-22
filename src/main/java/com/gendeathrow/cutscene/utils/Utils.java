@@ -6,6 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -59,9 +63,10 @@ public class Utils
 	          {
 	            soundAssets.add(listFiles[i].getName().substring(0, listFiles[i].getName().length() - 4));
 
-	          }else if(listFiles[i].getName().endsWith(".png"))
+	          }else if(listFiles[i].getName().endsWith(".png") || listFiles[i].getName().endsWith(".gif"))
 	          {
-	        	  imagesAssets.add(listFiles[i].getName().substring(0, listFiles[i].getName().length() - 4));
+	        	  //imagesAssets.add(listFiles[i].getName().substring(0, listFiles[i].getName().length() - 4));
+	        	  imagesAssets.add(listFiles[i].getName());
 	          }else if(listFiles[i].getName().endsWith(".lang"))
 	          {
 	        	  langAssets.add(listFiles[i].getName().substring(0, listFiles[i].getName().length() - 5));
@@ -167,16 +172,10 @@ public class Utils
 	{
         for (int i = 0; i < imageAssets.size(); i++)
         {
-
-           out.putNextEntry(new JarEntry("assets/ccsfiles/textures/gui/" + encodeName((String)imageAssets.get(i)) + ".png"));
-	
-           FileInputStream f1 = new FileInputStream(new File(f, (String)imageAssets.get(i) + ".png"));
-	          int len;
-	          while ((len = f1.read(buf)) > 0)
-	            out.write(buf, 0, len);
-	          f1.close();
-	         
-	       
+        	
+        	if(imageAssets.get(i).toString().endsWith(".png")) 	addPNG((String)imageAssets.get(i), f, out, buf);
+        	else if(imageAssets.get(i).toString().endsWith(".gif"))  addGif((String)imageAssets.get(i), f, out, buf);
+        	
 //	          if(new File(f,(String)imageAssets.get(i) +".png.mcmeta").exists())
 //	          {
 //	              out.putNextEntry(new JarEntry("assets/ccsfiles/textures/gui/" + encodeName((String)imageAssets.get(i)) + ".png.mcmeta"));
@@ -194,6 +193,30 @@ public class Utils
         }
 	}
 	
+	
+	private static void addGif(String asset, File f, JarOutputStream out, byte[] buf) throws IOException
+	{
+			
+			out.putNextEntry(new JarEntry("assets/ccsfiles/textures/gui/" + encodeName(asset.substring(0, asset.length() - 4)) + ".gif"));
+	   	
+	        FileInputStream f1 = new FileInputStream(new File(f, asset));
+		          int len;
+		          while ((len = f1.read(buf)) > 0)
+		            out.write(buf, 0, len);
+		          f1.close();
+	}
+	
+	private static void addPNG(String asset, File f, JarOutputStream out, byte[] buf) throws IOException
+	{
+       out.putNextEntry(new JarEntry("assets/ccsfiles/textures/gui/" + encodeName(asset.substring(0, asset.length() - 4)) + ".png"));
+	
+        FileInputStream f1 = new FileInputStream(new File(f, asset));
+	          int len;
+	          while ((len = f1.read(buf)) > 0)
+	            out.write(buf, 0, len);
+	          f1.close();
+	}
+	
 	  public static String encodeName(String name)
 	  {
 	    String str = "";
@@ -204,5 +227,26 @@ public class Utils
 	      str = str + Integer.toString(Character.codePointAt(name, i));
 	    }
 	    return str;
+	  }
+	  
+	  @SuppressWarnings("resource")
+	  public static void downloadDemoFile() 
+	  {
+		  URL website;
+		  try 
+		  {
+				website = new URL("https://github.com/GenDeathrow/CutScenes-1.7.10/archive/master.zip");
+				ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+				FileOutputStream fos = new FileOutputStream("test.zip");
+				fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);	
+				
+		  } catch (MalformedURLException e) 
+		  {
+			  e.printStackTrace();
+		  } catch (IOException e)
+		  {
+			  e.printStackTrace();
+		  }
+
 	  }
 }

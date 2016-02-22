@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import javax.imageio.ImageIO;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import com.gendeathrow.cutscene.SceneRender.ActorObject.ActorType;
@@ -220,7 +222,7 @@ public class RenderAssist {
         tessellator.addVertexWithUV(x + width, y + 0, RenderAssist.zLevel, 1, 0);
         tessellator.addVertexWithUV(x + 0, y + 0, RenderAssist.zLevel, 0, 0);
         tessellator.draw();
-        
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glDisable(GL11.GL_BLEND);
     }
@@ -501,8 +503,14 @@ public class RenderAssist {
 				 if(resourcePath.endsWith(".png"))
 		         {
 		        	 path = resourcePath.substring(0, resourcePath.length() - 4);
+		        	 return new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
 		         }
-				return new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
+				 else if(resourcePath.endsWith(".gif"))
+		         {
+		        	 path = resourcePath.substring(0, resourcePath.length() - 4);
+		        	 return new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".gif");
+		         }
+				 return new ResourceLocation("ccsfiles","textures/gui/"+ Utils.encodeName(path)+".png");
 			}
 			else if(type == ActorType.SOUND) 
 			{
@@ -609,6 +617,50 @@ public class RenderAssist {
 		
 	}
 	
+	
+	
+	private static final int BYTES_PER_PIXEL = 4;
+	public static int loadTexture(BufferedImage image){
+	   
+	   int[] pixels = new int[image.getWidth() * image.getHeight()];
+	     image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+
+	     ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * BYTES_PER_PIXEL); //4 for RGBA, 3 for RGB
+	     
+	     for(int y = 0; y < image.getHeight(); y++){
+	         for(int x = 0; x < image.getWidth(); x++){
+	             int pixel = pixels[y * image.getWidth() + x];
+	             buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
+	             buffer.put((byte) ((pixel >> 8) & 0xFF));      // Green component
+	             buffer.put((byte) (pixel & 0xFF));               // Blue component
+	             buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component. Only for RGBA
+	         }
+	     }
+
+	     buffer.flip(); //FOR THE LOVE OF GOD DO NOT FORGET THIS
+
+	     // You now have a ByteBuffer filled with the color data of each pixel.
+	     // Now just create a texture ID and bind it. Then you can load it using 
+	     // whatever OpenGL method you want, for example:
+
+	   int textureID = GL11.glGenTextures(); //Generate texture ID
+	   	GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID); //Bind texture ID
+	     
+	     //Setup wrap mode
+	     GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11. GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
+	     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
+
+	     //Setup texture scaling filtering
+	     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+	     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+	     
+	     //Send texel data to OpenGL
+	     GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, image.getWidth(), image.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+	   
+	     //Return the texture ID so we can bind it later again
+	   return textureID;
+	}
+	
 	public class AlignmentDeserializer implements JsonDeserializer<Alignment>
 	{
 	  @Override
@@ -625,5 +677,8 @@ public class RenderAssist {
 	  }
 
 	}
+	
+	
+	
 	
 }
