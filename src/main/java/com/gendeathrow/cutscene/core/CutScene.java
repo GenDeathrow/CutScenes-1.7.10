@@ -27,8 +27,8 @@ import cpw.mods.fml.relauncher.Side;
 public class CutScene
 {
 	    public static final String MODID = "cutscene";
-	    //public static final String VERSION = "GD_CCS_VER";
-	    public static final String VERSION = "0.1.2";
+	    public static final String VERSION = "GD_CCS_VER";
+	    //public static final String VERSION = "0.1.2";
 	    public static final String Name = "CustomCutScene";
 	    public static final String Proxy = "com.gendeathrow.cutscene.core.proxies";
 	    public static final String Channel = "CCS_GenD";
