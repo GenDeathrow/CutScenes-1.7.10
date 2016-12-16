@@ -1,0 +1,7 @@
+language.name=Deutsch
+
+updatemsg.cutscene.available=Update %s von Custom CutScene ist verfügbar
+updatemsg.cutscene.download=Download & Änderungen:
+updatemsg.cutscene.uptodate=Custom CutScene %s ist aktuell
+updatemsg.cutscene.debug=Custom CutScene %s ist eine Debug-Version
+updatemsg.cutscene.error=Beim Durchsuchen der Versionsdatei von Custom CutScene ist ein Fehler aufgetreten!
